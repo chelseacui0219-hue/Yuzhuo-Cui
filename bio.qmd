@@ -2,27 +2,24 @@
 title: "About Me"
 ---
 
-Write a short biography here.
+I am currently a Master's student in Applied Economics and Data Science at the University of Pennsylvania, expected to graduate in 2027. Prior to this, I completed my Bachelor's degree in Economics and Finance at The University of Hong Kong, where I graduated with a cumulative GPA of 3.99/4.3.  
 
-Include:
+I am passionate about leveraging data-driven approaches to solve complex economic and financial problems. My academic and professional experiences have equipped me with strong quantitative skills and a deep interest in applying computational methods to real-world business challenges.
 
--   Educational background
--   Professional interests
--   Technical skills
--   Career goals
 
 ## Education
 
-Master of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Batelor of Science, University Name 2026
+Master of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) 
+Bachelor of Economics and Finance, Minor in Statistics, The University of Hong Kong, 2026
 
 ## Interests
 
--   Econometrics
--   Machine Learning
+-   Inequality
+-   Survey method
 -   Data Analysis
 
 ## Contact
 
-## student\@email.edu
+## yuzhuoc@sas.upenn.edu
 
 ------------------------------------------------------------------------
