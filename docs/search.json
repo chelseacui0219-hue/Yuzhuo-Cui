@@ -11,21 +11,21 @@
     "href": "bio.html",
     "title": "About Me",
     "section": "",
-    "text": "Write a short biography here.\nInclude:"
+    "text": "I am currently a Master’s student in Applied Economics and Data Science at the University of Pennsylvania, expected to graduate in 2027. Prior to this, I completed my Bachelor’s degree in Economics and Finance at The University of Hong Kong, where I graduated with a cumulative GPA of 3.99/4.3.\nI am passionate about leveraging data-driven approaches to solve complex economic and financial problems. My academic and professional experiences have equipped me with strong quantitative skills and a deep interest in applying computational methods to real-world business challenges."
   },
   {
     "objectID": "bio.html#education",
     "href": "bio.html#education",
     "title": "About Me",
     "section": "Education",
-    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Batelor of Science, University Name 2026"
+    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Bachelor of Economics and Finance, Minor in Statistics, The University of Hong Kong, 2026"
   },
   {
     "objectID": "bio.html#interests",
     "href": "bio.html#interests",
     "title": "About Me",
     "section": "Interests",
-    "text": "Interests\n\nEconometrics\nMachine Learning\nData Analysis"
+    "text": "Interests\n\nInequality\nSurvey method\nData Analysis"
   },
   {
     "objectID": "bio.html#contact",
@@ -75,5 +75,12 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "bio.html#yuzhuocsas.upenn.edu",
+    "href": "bio.html#yuzhuocsas.upenn.edu",
+    "title": "About Me",
+    "section": "yuzhuoc@sas.upenn.edu",
+    "text": "yuzhuoc@sas.upenn.edu"
   }
 ]
