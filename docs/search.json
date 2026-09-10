@@ -1,10 +1,52 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Yuzhuo Cui",
+    "objectID": "resume.html",
+    "href": "resume.html",
+    "title": "Resume",
     "section": "",
-    "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
+    "text": "Download my resume here:"
+  },
+  {
+    "objectID": "resume.html#resume-pdf",
+    "href": "resume.html#resume-pdf",
+    "title": "Resume",
+    "section": "Resume PDF",
+    "text": "Resume PDF"
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html",
+    "href": "blog/posts/WEEK1.html",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales and the coefficient comes out “statistically significant.” The correlation between ice cream sales and drowning data is so strong that someone might argue a casual relationship from the data. But the two aren’t causing each other. They’re both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on the variable you did include quietly picks up its effect. That is omitted variable bias.\nIf weather belongs in the model naturally but the testing model omitted it, the regression has to stuff weather’s influence somewhere, and the only available place is the ice cream variable. And the error isn’t random noise — it’s a systematic bias that always points the same way. That’s why “significant” can be so misleading: the test says the pattern isn’t chance, but it says nothing about whether ice cream is the cause. The result looks like a causal relationship that isn’t there.\n\n\nMake some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee.\n\n\n\nThe same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs.\n\n\n\nThe ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#a-tiny-demo",
+    "href": "blog/posts/WEEK1.html#a-tiny-demo",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "Make some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#the-formula-one-line",
+    "href": "blog/posts/WEEK1.html#the-formula-one-line",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "The same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#final",
+    "href": "blog/posts/WEEK1.html#final",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "The ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html",
+    "href": "blog/posts/post1/Untitled.html",
+    "title": "My First Blog Post",
+    "section": "",
+    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
   },
   {
     "objectID": "bio.html",
@@ -35,39 +77,11 @@
     "text": "Contact"
   },
   {
-    "objectID": "bio.html#studentemail.edu",
-    "href": "bio.html#studentemail.edu",
+    "objectID": "bio.html#yuzhuocsas.upenn.edu",
+    "href": "bio.html#yuzhuocsas.upenn.edu",
     "title": "About Me",
-    "section": "student@email.edu",
-    "text": "student@email.edu"
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "My First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "blog/posts/post1/Untitled.html",
-    "href": "blog/posts/post1/Untitled.html",
-    "title": "My First Blog Post",
-    "section": "",
-    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
-  },
-  {
-    "objectID": "resume.html",
-    "href": "resume.html",
-    "title": "Resume",
-    "section": "",
-    "text": "Download my resume here:"
-  },
-  {
-    "objectID": "resume.html#resume-pdf",
-    "href": "resume.html#resume-pdf",
-    "title": "Resume",
-    "section": "Resume PDF",
-    "text": "Resume PDF"
+    "section": "yuzhuoc@sas.upenn.edu",
+    "text": "yuzhuoc@sas.upenn.edu"
   },
   {
     "objectID": "about.html",
@@ -77,10 +91,17 @@
     "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
-    "objectID": "bio.html#yuzhuocsas.upenn.edu",
-    "href": "bio.html#yuzhuocsas.upenn.edu",
-    "title": "About Me",
-    "section": "yuzhuoc@sas.upenn.edu",
-    "text": "yuzhuoc@sas.upenn.edu"
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Weekly Blog_Omitted variable bias\n\n\n\n\n\n\n\n\nSep 9, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Yuzhuo Cui",
+    "section": "",
+    "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
   }
 ]
