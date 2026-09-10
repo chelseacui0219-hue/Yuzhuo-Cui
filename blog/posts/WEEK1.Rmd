@@ -1,0 +1,44 @@
+---
+title: "Weekly Blog_Omitted variable bias"
+author: "Yuzhuo Cui"
+date: "2026-09-09"
+output: html_document
+---
+
+# Ice cream, drownings, and the variable you forgot
+
+Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales and the coefficient comes out "statistically significant." The correlation between ice cream sales and drowning data is so strong that someone might argue a casual relationship from the data. But the two aren't causing each other. They're both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on the variable you did include quietly picks up its effect. That is omitted variable bias.
+
+If weather belongs in the model naturally but the testing model omitted it, the regression has to stuff weather's influence somewhere, and the only available place is the ice cream variable. And the error isn't random noise — it's a systematic bias that always points the same way. That's why "significant" can be so misleading: the test says the pattern isn't chance, but it says nothing about whether ice cream is the cause. The result looks like a causal relationship that isn't there.
+
+## A tiny demo
+
+Make some data where weather drives both, and ice cream has nothing to do with drowning:
+
+```{r}
+set.seed(1)
+n <- 200
+
+temp     <- rnorm(n, 80, 10)            # hot weather
+icecream <- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream
+drowning <- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings
+
+m_bad  <- lm(drowning ~ icecream)        # leave weather out
+m_good <- lm(drowning ~ icecream + temp) # put weather back in
+
+c(without_weather = coef(m_bad)["icecream"],
+  with_weather    = coef(m_good)["icecream"])
+```
+
+Without weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream's strong effect to the drowning data, but was the weather's effect hiding inside the ice cream variablee. 
+
+## The formula, one line
+
+The same point can be written down. If the truth is $y = \beta_1 x + \beta_2 z + u$ but you estimate $y \sim x$, the coefficient converges to
+
+$$\beta_1 + \beta_2\,\delta, \qquad \delta = \frac{\mathrm{Cov}(x,z)}{\mathrm{Var}(x)}.$$
+
+The bias is $\beta_2\delta$: how strongly the omitted variable moves $y$ ($\beta_2$), times how tightly it moves with the variable you kept ($\delta$). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs.
+
+## Final
+The ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables.  
