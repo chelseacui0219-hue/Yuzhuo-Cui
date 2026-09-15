@@ -1,7 +1,7 @@
 ---
 title: "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?"
 author: "Yuzhuo Cui"
-date: "2026-09-15"
+date: "2026-09-14"
 output: html_document
 ---
 
