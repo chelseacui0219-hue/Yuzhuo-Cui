@@ -14,39 +14,81 @@
     "text": "Resume PDF"
   },
   {
-    "objectID": "blog/posts/WEEK1.html",
-    "href": "blog/posts/WEEK1.html",
-    "title": "Weekly Blog_Omitted variable bias",
+    "objectID": "blog/posts/WEEK2.html",
+    "href": "blog/posts/WEEK2.html",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
     "section": "",
-    "text": "Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales and the coefficient comes out “statistically significant.” The correlation between ice cream sales and drowning data is so strong that someone might argue a casual relationship from the data. But the two aren’t causing each other. They’re both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on the variable you did include quietly picks up its effect. That is omitted variable bias.\nIf weather belongs in the model naturally but the testing model omitted it, the regression has to stuff weather’s influence somewhere, and the only available place is the ice cream variable. And the error isn’t random noise — it’s a systematic bias that always points the same way. That’s why “significant” can be so misleading: the test says the pattern isn’t chance, but it says nothing about whether ice cream is the cause. The result looks like a causal relationship that isn’t there.\n\n\nMake some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee.\n\n\n\nThe same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs.\n\n\n\nThe ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
+    "text": "This post uses web scraping to collect 25 recent remote tech job postings from We Work Remotely and analyzes the full job descriptions to identify which technical skills appear most often.\nThe goal is not just to demonstrate scraping, but to answer a practical question: if you are preparing for a remote tech career, what should you learn first?"
   },
   {
-    "objectID": "blog/posts/WEEK1.html#a-tiny-demo",
-    "href": "blog/posts/WEEK1.html#a-tiny-demo",
-    "title": "Weekly Blog_Omitted variable bias",
+    "objectID": "blog/posts/WEEK2.html#introduction",
+    "href": "blog/posts/WEEK2.html#introduction",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
     "section": "",
-    "text": "Make some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee."
+    "text": "This post uses web scraping to collect 25 recent remote tech job postings from We Work Remotely and analyzes the full job descriptions to identify which technical skills appear most often.\nThe goal is not just to demonstrate scraping, but to answer a practical question: if you are preparing for a remote tech career, what should you learn first?"
   },
   {
-    "objectID": "blog/posts/WEEK1.html#the-formula-one-line",
-    "href": "blog/posts/WEEK1.html#the-formula-one-line",
-    "title": "Weekly Blog_Omitted variable bias",
-    "section": "",
-    "text": "The same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs."
+    "objectID": "blog/posts/WEEK2.html#data-collection",
+    "href": "blog/posts/WEEK2.html#data-collection",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Data Collection",
+    "text": "Data Collection\nI used the rvest package in R to parse the public RSS feed from We Work Remotely’s programming jobs category.\n\nlibrary(rvest)\nlibrary(dplyr)\nlibrary(tibble)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nurl &lt;- \"https://weworkremotely.com/categories/remote-programming-jobs.rss\"\npage &lt;- read_html(url)\nitems &lt;- page %&gt;% html_elements(\"item\")\n\nlength(items)\n\n[1] 25"
   },
   {
-    "objectID": "blog/posts/WEEK1.html#final",
-    "href": "blog/posts/WEEK1.html#final",
-    "title": "Weekly Blog_Omitted variable bias",
-    "section": "",
-    "text": "The ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
+    "objectID": "blog/posts/WEEK2.html#data-cleaning",
+    "href": "blog/posts/WEEK2.html#data-cleaning",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Data Cleaning",
+    "text": "Data Cleaning\nEach RSS &lt;item&gt; contains a title, region, category, publication date, and a full job description. I extracted all five fields into a tidy data frame.\n\ntitles       &lt;- items %&gt;% html_element(\"title\") %&gt;% html_text2()\nregions      &lt;- items %&gt;% html_element(\"region\") %&gt;% html_text2()\ncategories   &lt;- items %&gt;% html_element(\"category\") %&gt;% html_text2()\ndates        &lt;- items %&gt;% html_element(\"pubdate\") %&gt;% html_text2()\ndescriptions &lt;- items %&gt;% html_element(\"description\") %&gt;% html_text2()\n\njobs &lt;- tibble(\n  title       = titles,\n  region      = regions,\n  category    = categories,\n  date        = dates,\n  description = descriptions\n)\n\nglimpse(jobs)\n\nRows: 25\nColumns: 5\n$ title       &lt;chr&gt; \"Huzzle: Full-Stack Developer (Python, React, AI)\", \"Ci&t:…\n$ region      &lt;chr&gt; \"Anywhere in the World\", \"Anywhere in the World\", \"Anywher…\n$ category    &lt;chr&gt; \"Full-Stack Programming\", \"Full-Stack Programming\", \"Full-…\n$ date        &lt;chr&gt; \"Tue, 18 Aug 2026 20:34:05 +0000\", \"Tue, 18 Aug 2026 20:34…\n$ description &lt;chr&gt; \"&lt;p&gt; &lt;strong&gt;Headquarters:&lt;/strong&gt; Mexico &lt;/p&gt; &lt;h3&gt;About …"
   },
   {
-    "objectID": "blog/posts/post1/Untitled.html",
-    "href": "blog/posts/post1/Untitled.html",
-    "title": "My First Blog Post",
+    "objectID": "blog/posts/WEEK2.html#analysis",
+    "href": "blog/posts/WEEK2.html#analysis",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Analysis",
+    "text": "Analysis\nI defined a list of 30 common technical skills and counted how many job descriptions mention each one. I used word-boundary regex (\\\\b) to avoid false matches — for example, ensuring that “Java” does not match “JavaScript”, and that “AI” does not match “email”.\n\nskills_list &lt;- c(\n  \"Python\", \"JavaScript\", \"TypeScript\", \"Java\", \"Golang\",\n  \"React\", \"Vue\", \"Angular\", \"Node\", \"Django\", \"Flask\",\n  \"SQL\", \"PostgreSQL\", \"MySQL\", \"MongoDB\",\n  \"AWS\", \"Azure\", \"GCP\", \"Docker\", \"Kubernetes\",\n  \"Git\", \"CI/CD\", \"GraphQL\",\n  \"Machine Learning\", \"TensorFlow\", \"PyTorch\",\n  \"HTML\", \"CSS\", \"Linux\", \"Bash\"\n)\n\nskill_counts &lt;- tibble(\n  skill = skills_list,\n  n = map_int(skills_list, function(s) {\n    sum(str_detect(jobs$description,\n                   regex(paste0(\"\\\\b\", s, \"\\\\b\"), ignore_case = TRUE)))\n  })\n) |&gt;\n  filter(n &gt; 0) |&gt;\n  arrange(desc(n))\n\nprint(skill_counts, n = 30)\n\n# A tibble: 22 × 2\n   skill                n\n   &lt;chr&gt;            &lt;int&gt;\n 1 React               10\n 2 AWS                  9\n 3 CI/CD                8\n 4 Docker               7\n 5 Python               5\n 6 TypeScript           5\n 7 Kubernetes           5\n 8 MongoDB              4\n 9 Azure                4\n10 CSS                  4\n11 Java                 3\n12 Node                 3\n13 PostgreSQL           2\n14 GCP                  2\n15 Git                  2\n16 GraphQL              2\n17 HTML                 2\n18 JavaScript           1\n19 SQL                  1\n20 Machine Learning     1\n21 Linux                1\n22 Bash                 1\n\n\n\nskill_counts |&gt;\n  mutate(skill = reorder(skill, n)) |&gt;\n  ggplot(aes(x = n, y = skill)) +\n  geom_col(fill = \"#2c7fb8\") +\n  geom_text(aes(label = n), hjust = -0.3, size = 4) +\n  labs(\n    title = \"Most In-Demand Technical Skills in Remote Jobs\",\n    subtitle = \"Based on 25 job postings from We Work Remotely\",\n    x = \"Number of postings mentioning this skill\",\n    y = NULL,\n    caption = \"Data source: We Work Remotely (https://weworkremotely.com)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  expand_limits(x = max(skill_counts$n) * 1.2)\n\n\n\n\nMost in-demand technical skills in remote tech jobs"
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#key-findings",
+    "href": "blog/posts/WEEK2.html#key-findings",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Key Findings",
+    "text": "Key Findings\n1. Frontend frameworks lead the pack. React appears in 10 out of 25 postings (40%) — more than any other skill. This confirms that modern remote employers expect engineers to be comfortable building interactive user interfaces.\n2. Cloud and DevOps skills are the new baseline. AWS (9), CI/CD (8), Docker (7), and Kubernetes (5) together appear in over 60% of postings. Cloud infrastructure and automated deployment are common expectations for remote engineers.\n3. Data and database skills are expected, not optional. MongoDB (4), PostgreSQL (2), and SQL (1) appear frequently enough to confirm that remote engineers must be comfortable working with databases, even if they are not database specialists."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#actionable-recommendation",
+    "href": "blog/posts/WEEK2.html#actionable-recommendation",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Actionable Recommendation",
+    "text": "Actionable Recommendation\nIf you are preparing for a remote tech career, prioritize:\n\nReact — it appears in 40% of postings and is the single most requested skill.\nAWS + Docker + CI/CD — this trio of cloud and DevOps skills appears across more than half of the postings.\nPython — the most transferable language, useful for backend, data analysis, and machine learning roles."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#limitations",
+    "href": "blog/posts/WEEK2.html#limitations",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Limitations",
+    "text": "Limitations\nThis analysis covers only 25 postings from a single RSS feed at one point in time. We Work Remotely is not representative of all remote work, and counting keywords in job descriptions is a rough proxy for skill demand."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#data-source",
+    "href": "blog/posts/WEEK2.html#data-source",
+    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "section": "Data Source",
+    "text": "Data Source\nAll data was collected from We Work Remotely. The RSS feed is publicly available and does not require authentication."
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
     "section": "",
-    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
+    "text": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?\n\n\n\n\n\n\n\n\nSep 14, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nWeekly Blog_Omitted variable bias\n\n\n\n\n\n\n\n\nSep 9, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
     "objectID": "bio.html",
@@ -84,18 +126,39 @@
     "text": "yuzhuoc@sas.upenn.edu"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "blog/posts/post1/Untitled.html",
+    "href": "blog/posts/post1/Untitled.html",
+    "title": "My First Blog Post",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
   },
   {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
+    "objectID": "blog/posts/WEEK1.html",
+    "href": "blog/posts/WEEK1.html",
+    "title": "Weekly Blog_Omitted variable bias",
     "section": "",
-    "text": "Weekly Blog_Omitted variable bias\n\n\n\n\n\n\n\n\nSep 9, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
+    "text": "Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales and the coefficient comes out “statistically significant.” The correlation between ice cream sales and drowning data is so strong that someone might argue a casual relationship from the data. But the two aren’t causing each other. They’re both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on the variable you did include quietly picks up its effect. That is omitted variable bias.\nIf weather belongs in the model naturally but the testing model omitted it, the regression has to stuff weather’s influence somewhere, and the only available place is the ice cream variable. And the error isn’t random noise — it’s a systematic bias that always points the same way. That’s why “significant” can be so misleading: the test says the pattern isn’t chance, but it says nothing about whether ice cream is the cause. The result looks like a causal relationship that isn’t there.\n\n\nMake some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee.\n\n\n\nThe same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs.\n\n\n\nThe ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#a-tiny-demo",
+    "href": "blog/posts/WEEK1.html#a-tiny-demo",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "Make some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#the-formula-one-line",
+    "href": "blog/posts/WEEK1.html#the-formula-one-line",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "The same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs."
+  },
+  {
+    "objectID": "blog/posts/WEEK1.html#final",
+    "href": "blog/posts/WEEK1.html#final",
+    "title": "Weekly Blog_Omitted variable bias",
+    "section": "",
+    "text": "The ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
   },
   {
     "objectID": "index.html",
@@ -103,68 +166,5 @@
     "title": "Yuzhuo Cui",
     "section": "",
     "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
-  },
-  {
-    "objectID": "blog/blog2.html",
-    "href": "blog/blog2.html",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "",
-    "text": "Remote work has become a permanent part of the tech labor market, but which technical skills actually command the most demand? This post uses web scraping to collect 25 recent remote tech job postings from We Work Remotely and analyzes the full job descriptions to identify which technical skills appear most often.\nThe goal is not just to demonstrate scraping, but to answer a practical question: if you are preparing for a remote tech career, what should you learn first?"
-  },
-  {
-    "objectID": "blog/blog2.html#introduction",
-    "href": "blog/blog2.html#introduction",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "",
-    "text": "Remote work has become a permanent part of the tech labor market, but which technical skills actually command the most demand? This post uses web scraping to collect 25 recent remote tech job postings from We Work Remotely and analyzes the full job descriptions to identify which technical skills appear most often.\nThe goal is not just to demonstrate scraping, but to answer a practical question: if you are preparing for a remote tech career, what should you learn first?"
-  },
-  {
-    "objectID": "blog/blog2.html#data-collection",
-    "href": "blog/blog2.html#data-collection",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Collection",
-    "text": "Data Collection\nI used the rvest package in R to parse the public RSS feed from We Work Remotely’s programming jobs category. RSS feeds are ideal for ethical scraping because they are publicly available, structured in XML format, and lightweight (no unnecessary server load).\n\nlibrary(rvest)\nlibrary(dplyr)\nlibrary(tibble)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nurl &lt;- \"https://weworkremotely.com/categories/remote-programming-jobs.rss\"\npage &lt;- read_html(url)\nitems &lt;- page %&gt;% html_elements(\"item\")\n\nlength(items)\n\n[1] 25"
-  },
-  {
-    "objectID": "blog/blog2.html#data-cleaning",
-    "href": "blog/blog2.html#data-cleaning",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Cleaning",
-    "text": "Data Cleaning\nEach RSS &lt;item&gt; contains a title, region, category, publication date, and a full job description. I extracted all five fields into a tidy data frame.\n\ntitles       &lt;- items %&gt;% html_element(\"title\") %&gt;% html_text2()\nregions      &lt;- items %&gt;% html_element(\"region\") %&gt;% html_text2()\ncategories   &lt;- items %&gt;% html_element(\"category\") %&gt;% html_text2()\ndates        &lt;- items %&gt;% html_element(\"pubdate\") %&gt;% html_text2()\ndescriptions &lt;- items %&gt;% html_element(\"description\") %&gt;% html_text2()\n\njobs &lt;- tibble(\n  title       = titles,\n  region      = regions,\n  category    = categories,\n  date        = dates,\n  description = descriptions\n)\n\nglimpse(jobs)\n\nRows: 25\nColumns: 5\n$ title       &lt;chr&gt; \"Huzzle: Full-Stack Developer (Python, React, AI)\", \"Ci&t:…\n$ region      &lt;chr&gt; \"Anywhere in the World\", \"Anywhere in the World\", \"Anywher…\n$ category    &lt;chr&gt; \"Full-Stack Programming\", \"Full-Stack Programming\", \"Full-…\n$ date        &lt;chr&gt; \"Tue, 18 Aug 2026 20:34:05 +0000\", \"Tue, 18 Aug 2026 20:34…\n$ description &lt;chr&gt; \"&lt;p&gt; &lt;strong&gt;Headquarters:&lt;/strong&gt; Mexico &lt;/p&gt; &lt;h3&gt;About …"
-  },
-  {
-    "objectID": "blog/blog2.html#analysis",
-    "href": "blog/blog2.html#analysis",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Analysis",
-    "text": "Analysis\nI defined a list of 30 common technical skills and counted how many job descriptions mention each one. I used word-boundary regex (\\\\b) to avoid false matches — for example, ensuring that “Java” does not match “JavaScript”, and that “AI” does not match “email”.\n\nskills_list &lt;- c(\n  \"Python\", \"JavaScript\", \"TypeScript\", \"Java\", \"Golang\",\n  \"React\", \"Vue\", \"Angular\", \"Node\", \"Django\", \"Flask\",\n  \"SQL\", \"PostgreSQL\", \"MySQL\", \"MongoDB\",\n  \"AWS\", \"Azure\", \"GCP\", \"Docker\", \"Kubernetes\",\n  \"Git\", \"CI/CD\", \"GraphQL\",\n  \"Machine Learning\", \"TensorFlow\", \"PyTorch\",\n  \"HTML\", \"CSS\", \"Linux\", \"Bash\"\n)\n\nskill_counts &lt;- tibble(\n  skill = skills_list,\n  n = map_int(skills_list, function(s) {\n    sum(str_detect(jobs$description,\n                   regex(paste0(\"\\\\b\", s, \"\\\\b\"), ignore_case = TRUE)))\n  })\n) |&gt;\n  filter(n &gt; 0) |&gt;\n  arrange(desc(n))\n\nprint(skill_counts, n = 30)\n\n# A tibble: 22 × 2\n   skill                n\n   &lt;chr&gt;            &lt;int&gt;\n 1 React               10\n 2 AWS                  9\n 3 CI/CD                8\n 4 Docker               7\n 5 Python               5\n 6 TypeScript           5\n 7 Kubernetes           5\n 8 MongoDB              4\n 9 Azure                4\n10 CSS                  4\n11 Java                 3\n12 Node                 3\n13 PostgreSQL           2\n14 GCP                  2\n15 Git                  2\n16 GraphQL              2\n17 HTML                 2\n18 JavaScript           1\n19 SQL                  1\n20 Machine Learning     1\n21 Linux                1\n22 Bash                 1\n\n\n\nskill_counts |&gt;\n  mutate(skill = reorder(skill, n)) |&gt;\n  ggplot(aes(x = n, y = skill)) +\n  geom_col(fill = \"#2c7fb8\") +\n  geom_text(aes(label = n), hjust = -0.3, size = 4) +\n  labs(\n    title = \"Most In-Demand Technical Skills in Remote Jobs\",\n    subtitle = \"Based on 25 job postings from We Work Remotely\",\n    x = \"Number of postings mentioning this skill\",\n    y = NULL,\n    caption = \"Data source: We Work Remotely (https://weworkremotely.com)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  expand_limits(x = max(skill_counts$n) * 1.2)\n\n\n\n\nMost in-demand technical skills in remote tech jobs"
-  },
-  {
-    "objectID": "blog/blog2.html#key-findings",
-    "href": "blog/blog2.html#key-findings",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Key Findings",
-    "text": "Key Findings\n1. Frontend frameworks lead the pack. React appears in 10 out of 25 postings (40%) — more than any other skill. This confirms that modern remote employers expect engineers to be comfortable building interactive user interfaces.\n2. Cloud and DevOps skills are the new baseline. AWS (9), CI/CD (8), Docker (7), and Kubernetes (5) together appear in over 60% of postings. Cloud infrastructure and automated deployment are no longer specialized skills — they are entry-level expectations for remote engineers.\n3. Python remains the most versatile language. Python appears in 5 postings, matching TypeScript and Kubernetes. Unlike Java (3) or JavaScript (1), Python is used across backend, data, and AI roles, making it the safest single language to learn.\n4. Data and database skills are expected, not optional. MongoDB (4), PostgreSQL (2), and SQL (1) appear frequently enough to confirm that remote engineers must be comfortable working with databases, even if they are not database specialists."
-  },
-  {
-    "objectID": "blog/blog2.html#actionable-recommendation",
-    "href": "blog/blog2.html#actionable-recommendation",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Actionable Recommendation",
-    "text": "Actionable Recommendation\nIf you are preparing for a remote tech career, prioritize:\n\nReact — it appears in 40% of postings and is the single most requested skill.\nAWS + Docker + CI/CD — this trio of cloud and DevOps skills appears across more than half of the postings.\nPython — the most transferable language, useful for backend, data analysis, and machine learning roles.\nA database (MongoDB or PostgreSQL) — every backend or full-stack role expects this.\n\nFor someone with an economics or data background, the data suggests that pairing Python with cloud fundamentals (AWS + Docker) and basic frontend capability (React) is the highest-leverage path into the remote tech market."
-  },
-  {
-    "objectID": "blog/blog2.html#limitations",
-    "href": "blog/blog2.html#limitations",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Limitations",
-    "text": "Limitations\nThis analysis covers only 25 postings from a single RSS feed at one point in time. We Work Remotely is not representative of all remote work, and counting keywords in job descriptions is a rough proxy for skill demand. These findings describe advertised demand, not actual hiring outcomes."
-  },
-  {
-    "objectID": "blog/blog2.html#data-source",
-    "href": "blog/blog2.html#data-source",
-    "title": "What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Source",
-    "text": "Data Source\nAll data was collected from We Work Remotely. The RSS feed is publicly available and does not require authentication."
   }
 ]
