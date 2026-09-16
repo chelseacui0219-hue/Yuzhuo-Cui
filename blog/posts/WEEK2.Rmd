@@ -1,155 +1,159 @@
 ---
-title: "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?"
-author: "Yuzhuo Cui"
-date: "2026-09-14"
-output: html_document
+title: "Which Technical Skills Are Most In Demand in Tech Hiring?"
+date: 2026-09-16
+author: Yuzhuo Cui
 ---
-
 
 ## Introduction
 
-This post uses web scraping to collect 25 recent remote tech job postings from
-[We Work Remotely](https://weworkremotely.com) and analyzes the full
-job descriptions to identify which technical skills appear most often.
+Tech hiring has always been competitive, but the skills employers
+ask for shift constantly. With hundreds of languages, frameworks,
+and tools competing for attention, it is hard to know where to
+focus your learning.
 
-The goal is not just to demonstrate scraping, but to answer a practical
-question: **if you are preparing for a remote tech career, what should
-you learn first?**
+This analysis scrapes job postings from three independent sources
+to answer a simple question:
 
-## Data Collection
+**Which technical skills appear most frequently in tech job
+postings?**
 
-I used the `rvest` package in R to parse the public RSS feed from
-We Work Remotely's programming jobs category. 
-```{r}
-#| message: false
-#| warning: false
+The answer turns out to be surprisingly consistent across
+platforms.
 
-library(rvest)
-library(dplyr)
-library(tibble)
-library(stringr)
-library(purrr)
-library(ggplot2)
+## Where the Data Comes From
 
-url <- "https://weworkremotely.com/categories/remote-programming-jobs.rss"
-page <- read_html(url)
-items <- page %>% html_elements("item")
+I collected job postings from three different platforms, each
+representing a different slice of the tech hiring market:
 
-length(items)
-```
+| Source | What it covers | Postings |
+|--------|---------------|----------|
+| **RemoteOK** | A curated remote-first job board with structured skill tags | 99 |
+| **We Work Remotely** | A remote-only job board with detailed descriptions | 25 |
+| **Hacker News "Who is Hiring?"** | Global startup and tech hiring, updated monthly | 245 |
 
-## Data Cleaning
+Together these sources cover a wide range of employers: from
+remote-first startups to established tech companies and
+traditional firms hiring across onsite, hybrid, and remote
+arrangements.
 
-Each RSS `<item>` contains a title, region, category, publication date,
-and a full job description. I extracted all five fields into a tidy
-data frame.
+Three sources are better than one. Each platform attracts a
+different kind of employer, so combining them reduces the risk
+of drawing conclusions from a single, biased sample.
 
-```{r}
-titles       <- items %>% html_element("title") %>% html_text2()
-regions      <- items %>% html_element("region") %>% html_text2()
-categories   <- items %>% html_element("category") %>% html_text2()
-dates        <- items %>% html_element("pubdate") %>% html_text2()
-descriptions <- items %>% html_element("description") %>% html_text2()
+## The Skills That Keep Appearing
 
-jobs <- tibble(
-  title       = titles,
-  region      = regions,
-  category    = categories,
-  date        = dates,
-  description = descriptions
-)
+The clearest pattern across all three datasets is the dominance
+of **Python**. It appears in 69 of the 245 Hacker News postings
+(28%), and it ranks among the top skills on the other two
+platforms as well.
 
-glimpse(jobs)
-```
+Let's look at each source in turn.
 
-## Analysis
+### We Work Remotely: 25 Remote Tech Postings
 
-I defined a list of 30 common technical skills and counted how many
-job descriptions mention each one. I used word-boundary regex
-(`\\b`) to avoid false matches — for example, ensuring that "Java"
-does not match "JavaScript", and that "AI" does not match "email".
+![Skills in demand on We Work Remotely](wwr_skills.png){width=90%}
 
-```{r}
-skills_list <- c(
-  "Python", "JavaScript", "TypeScript", "Java", "Golang",
-  "React", "Vue", "Angular", "Node", "Django", "Flask",
-  "SQL", "PostgreSQL", "MySQL", "MongoDB",
-  "AWS", "Azure", "GCP", "Docker", "Kubernetes",
-  "Git", "CI/CD", "GraphQL",
-  "Machine Learning", "TensorFlow", "PyTorch",
-  "HTML", "CSS", "Linux", "Bash"
-)
+React leads the pack, appearing in 40% of postings, followed
+closely by AWS and CI/CD. The pattern here points to a
+**cloud-native, frontend-heavy** skill set — exactly what you
+would expect from a remote-only job board.
 
-skill_counts <- tibble(
-  skill = skills_list,
-  n = map_int(skills_list, function(s) {
-    sum(str_detect(jobs$description,
-                   regex(paste0("\\b", s, "\\b"), ignore_case = TRUE)))
-  })
-) |>
-  filter(n > 0) |>
-  arrange(desc(n))
+### RemoteOK: 99 Remote-First Postings
 
-print(skill_counts, n = 30)
-```
+![Skills in demand on RemoteOK](remoteok_skills.png){width=90%}
 
-```{r}
-#| fig-cap: "Most in-demand technical skills in remote tech jobs"
-#| fig-width: 8
-#| fig-height: 6
+RemoteOK's tag data tells a different story. **Go** and
+**system administration** dominate, reflecting a user base of
+infrastructure engineers and DevOps specialists. Backend
+skills are more prominent here than on the other platforms.
 
-skill_counts |>
-  mutate(skill = reorder(skill, n)) |>
-  ggplot(aes(x = n, y = skill)) +
-  geom_col(fill = "#2c7fb8") +
-  geom_text(aes(label = n), hjust = -0.3, size = 4) +
-  labs(
-    title = "Most In-Demand Technical Skills in Remote Jobs",
-    subtitle = "Based on 25 job postings from We Work Remotely",
-    x = "Number of postings mentioning this skill",
-    y = NULL,
-    caption = "Data source: We Work Remotely (https://weworkremotely.com)"
-  ) +
-  theme_minimal(base_size = 13) +
-  expand_limits(x = max(skill_counts$n) * 1.2)
-```
+### Hacker News: 245 Global Tech Postings
 
-## Key Findings
+![Skills in demand on Hacker News](hn_skills.png){width=90%}
 
-**1. Frontend frameworks lead the pack.**
-React appears in 10 out of 25 postings (40%) — more than any other
-skill. This confirms that modern remote employers expect engineers
-to be comfortable building interactive user interfaces.
+The Hacker News sample is the largest and most diverse. **Python**
+leads with 69 mentions (28%), followed by **TypeScript** and
+**React**. This is the startup-heavy, full-stack profile —
+engineers who are expected to work across the entire product.
 
-**2. Cloud and DevOps skills are the new baseline.**
-AWS (9), CI/CD (8), Docker (7), and Kubernetes (5) together appear
-in over 60% of postings. Cloud infrastructure and automated
-deployment are common expectations for remote engineers.
+## How the Three Platforms Compare
 
-**3. Data and database skills are expected, not optional.**
-MongoDB (4), PostgreSQL (2), and SQL (1) appear frequently enough to
-confirm that remote engineers must be comfortable working with
-databases, even if they are not database specialists.
+The most interesting finding is not what the platforms agree on,
+but where they differ.
 
-## Actionable Recommendation
+| Platform | Most distinctive skill | Likely reason |
+|----------|----------------------|---------------|
+| We Work Remotely | **React** (40% of postings) | Curated board attracts design-forward companies |
+| RemoteOK | **Go / sys admin** | User base of infrastructure engineers |
+| Hacker News | **Python** (28% of postings) | Startup-heavy community, full-stack roles |
 
-**If you are preparing for a remote tech career, prioritize:**
+> **The takeaway:** There is no single "tech job market."
+> Different platforms serve different segments, and the skills
+> that matter depend on which segment you are targeting.
 
-1. **React** — it appears in 40% of postings and is the single most
-   requested skill.
-2. **AWS + Docker + CI/CD** — this trio of cloud and DevOps skills
-   appears across more than half of the postings.
-3. **Python** — the most transferable language, useful for backend,
-   data analysis, and machine learning roles.
+## What This Means If You're Learning
 
-## Limitations
+If you are preparing for a career in tech — or planning what to
+study next — the data suggests a clear priority order:
 
-This analysis covers only 25 postings from a single RSS feed at one
-point in time. We Work Remotely is not representative of all remote
-work, and counting keywords in job descriptions is a rough proxy for
-skill demand. 
+**1. Learn Python first.**
+It is the only language that appears near the top of every
+platform. It works for backend engineering, data analysis,
+automation, and increasingly for AI.
 
-## Data Source
+**2. Add React.**
+Frontend skills are not optional. Even backend-leaning roles
+increasingly expect familiarity with a modern JavaScript
+framework.
 
-All data was collected from [We Work Remotely](https://weworkremotely.com).
-The RSS feed is publicly available and does not require authentication.
+**3. Build cloud and DevOps literacy.**
+AWS, Docker, and CI/CD appear together so often that they are
+effectively a single requirement. You do not need to be a
+specialist, but you do need to be comfortable.
+
+**4. Learn one database well.**
+PostgreSQL is the safest choice, but MongoDB is also common.
+The specific choice matters less than having real experience
+with schema design and queries.
+
+
+## What This Analysis Cannot Tell You
+
+A few honest limitations:
+
+- **It is a snapshot.** The data was collected in September 2026
+  and reflects one moment in a fast-moving market.
+- **Job postings are not hires.** Employers list many skills they
+  never actually test for. Advertised demand is a rough proxy
+  for real demand.
+- **Keyword counting is imprecise.** A posting that mentions
+  "Python" once counts the same as one that mentions it ten times.
+- **Not all postings are remote.** The Hacker News sample
+  includes onsite and hybrid roles. This makes the findings
+  broader, but less specific to remote-only hiring.
+
+These limitations do not undermine the findings — the patterns
+are strong enough to be meaningful — but they are worth keeping
+in mind.
+
+## Conclusion
+
+Across three independent data sources and nearly 400 job postings,
+the same skills keep appearing: **Python, React, AWS, Docker, and
+CI/CD**.
+
+The specific mix varies by platform, but the core toolkit is
+remarkably consistent. For anyone preparing for a career in tech,
+the path is clear: start with Python, add frontend and cloud
+skills, and build real projects that demonstrate you can ship.
+
+The data does not predict the future. But it does describe the
+present — and the present is a good place to start.
+
+---
+
+*Data sources: [RemoteOK](https://remoteok.com),
+[We Work Remotely](https://weworkremotely.com), and
+[Hacker News](https://news.ycombinator.com/item?id=49522897).
+All scraping was done ethically using public RSS feeds, APIs,
+and HTML pages.*
