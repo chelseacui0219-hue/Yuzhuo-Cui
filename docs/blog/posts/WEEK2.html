@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Yuzhuo Cui">
-<meta name="dcterms.date" content="2026-09-14">
+<meta name="dcterms.date" content="2026-09-16">
 
-<title>Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want? – Yuzhuo Cui</title>
+<title>Which Technical Skills Are Most In Demand in Tech Hiring? – Yuzhuo Cui</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,41 +24,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -162,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?</h1>
+<h1 class="title">Which Technical Skills Are Most In Demand in Tech Hiring?</h1>
 </div>
 
 
@@ -179,7 +144,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 14, 2026</p>
+      <p class="date">September 16, 2026</p>
     </div>
   </div>
   
@@ -193,159 +158,147 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Remote working has been modern trend nowadays. However, it is necessary to know what kind of abilities do the employers require for. This post uses web scraping to collect 25 recent remote tech job postings from <a href="https://weworkremotely.com">We Work Remotely</a> and analyzes the full job descriptions to identify which technical skills appear most often.</p>
-<p>The goal is not just to demonstrate scraping, but to answer a practical question: <strong>if you are preparing for a remote tech career, what should you learn first?</strong></p>
+<p>Tech hiring has always been competitive, but the skills employers ask for shift constantly. With hundreds of languages, frameworks, and tools competing for attention, it is hard to know where to focus your learning.</p>
+<p>This analysis scrapes job postings from three independent sources to answer a simple question:</p>
+<p><strong>Which technical skills appear most frequently in tech job postings?</strong></p>
+<p>The answer turns out to be surprisingly consistent across platforms.</p>
 </section>
-<section id="data-collection" class="level2">
-<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
-<p>I used the <code>rvest</code> package in R to parse the public RSS feed from We Work Remotely’s programming jobs category.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://weworkremotely.com/categories/remote-programming-jobs.rss"</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>items <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="st">"item"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(items)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 25</code></pre>
-</div>
-</div>
+<section id="where-the-data-comes-from" class="level2">
+<h2 class="anchored" data-anchor-id="where-the-data-comes-from">Where the Data Comes From</h2>
+<p>I collected job postings from three different platforms, each representing a different slice of the tech hiring market:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 45%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>What it covers</th>
+<th>Postings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RemoteOK</strong></td>
+<td>A curated remote-first job board with structured skill tags</td>
+<td>99</td>
+</tr>
+<tr class="even">
+<td><strong>We Work Remotely</strong></td>
+<td>A remote-only job board with detailed descriptions</td>
+<td>25</td>
+</tr>
+<tr class="odd">
+<td><strong>Hacker News “Who is Hiring?”</strong></td>
+<td>Global startup and tech hiring, updated monthly</td>
+<td>245</td>
+</tr>
+</tbody>
+</table>
+<p>Together these sources cover a wide range of employers: from remote-first startups to established tech companies and traditional firms hiring across onsite, hybrid, and remote arrangements.</p>
+<p>Three sources are better than one. Each platform attracts a different kind of employer, so combining them reduces the risk of drawing conclusions from a single, biased sample.</p>
 </section>
-<section id="data-cleaning" class="level2">
-<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
-<p>Each RSS <code>&lt;item&gt;</code> contains a title, region, category, publication date, and a full job description. I extracted all five fields into a tidy data frame.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>titles       <span class="ot">&lt;-</span> items <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">"title"</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>()</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>regions      <span class="ot">&lt;-</span> items <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">"region"</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>()</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>categories   <span class="ot">&lt;-</span> items <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">"category"</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>dates        <span class="ot">&lt;-</span> items <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">"pubdate"</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>()</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>descriptions <span class="ot">&lt;-</span> items <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">"description"</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>()</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> titles,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">region      =</span> regions,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">category    =</span> categories,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">date        =</span> dates,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> descriptions</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(jobs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 25
-Columns: 5
-$ title       &lt;chr&gt; "Alphorm: Formateur IT Indépendant Cybersécurité, IA, Clou…
-$ region      &lt;chr&gt; "Anywhere in the World", "Anywhere in the World", "Anywher…
-$ category    &lt;chr&gt; "Full-Stack Programming", "Full-Stack Programming", "Full-…
-$ date        &lt;chr&gt; "Tue, 18 Aug 2026 20:35:03 +0000", "Tue, 18 Aug 2026 20:34…
-$ description &lt;chr&gt; "&lt;p&gt; &lt;strong&gt;Headquarters:&lt;/strong&gt; 6 Rue dArmaillé Paris,…</code></pre>
-</div>
-</div>
-</section>
-<section id="analysis" class="level2">
-<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-<p>I defined a list of 30 common technical skills and counted how many job descriptions mention each one. I used word-boundary regex (<code>\\b</code>) to avoid false matches — for example, ensuring that “Java” does not match “JavaScript”, and that “AI” does not match “email”.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>skills_list <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Python"</span>, <span class="st">"JavaScript"</span>, <span class="st">"TypeScript"</span>, <span class="st">"Java"</span>, <span class="st">"Golang"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"React"</span>, <span class="st">"Vue"</span>, <span class="st">"Angular"</span>, <span class="st">"Node"</span>, <span class="st">"Django"</span>, <span class="st">"Flask"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SQL"</span>, <span class="st">"PostgreSQL"</span>, <span class="st">"MySQL"</span>, <span class="st">"MongoDB"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AWS"</span>, <span class="st">"Azure"</span>, <span class="st">"GCP"</span>, <span class="st">"Docker"</span>, <span class="st">"Kubernetes"</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Git"</span>, <span class="st">"CI/CD"</span>, <span class="st">"GraphQL"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Machine Learning"</span>, <span class="st">"TensorFlow"</span>, <span class="st">"PyTorch"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"HTML"</span>, <span class="st">"CSS"</span>, <span class="st">"Linux"</span>, <span class="st">"Bash"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>skill_counts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">skill =</span> skills_list,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">map_int</span>(skills_list, <span class="cf">function</span>(s) {</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">str_detect</span>(jobs<span class="sc">$</span>description,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">regex</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">b"</span>, s, <span class="st">"</span><span class="sc">\\</span><span class="st">b"</span>), <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)))</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(skill_counts, <span class="at">n =</span> <span class="dv">30</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 21 × 2
-   skill                n
-   &lt;chr&gt;            &lt;int&gt;
- 1 React                8
- 2 AWS                  8
- 3 CI/CD                8
- 4 CSS                  6
- 5 Docker               5
- 6 Python               4
- 7 MongoDB              3
- 8 Azure                3
- 9 Kubernetes           3
-10 Git                  3
-11 HTML                 3
-12 TypeScript           2
-13 Java                 2
-14 Node                 2
-15 SQL                  2
-16 GCP                  2
-17 GraphQL              2
-18 Machine Learning     2
-19 JavaScript           1
-20 Linux                1
-21 Bash                 1</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>skill_counts <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">skill =</span> <span class="fu">reorder</span>(skill, n)) <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> skill)) <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#2c7fb8"</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> n), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Most In-Demand Technical Skills in Remote Jobs"</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Based on 25 job postings from We Work Remotely"</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of postings mentioning this skill"</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Data source: We Work Remotely (https://weworkremotely.com)"</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">x =</span> <span class="fu">max</span>(skill_counts<span class="sc">$</span>n) <span class="sc">*</span> <span class="fl">1.2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
+<section id="the-skills-that-keep-appearing" class="level2">
+<h2 class="anchored" data-anchor-id="the-skills-that-keep-appearing">The Skills That Keep Appearing</h2>
+<p>The clearest pattern across all three datasets is the dominance of <strong>Python</strong>. It appears in 69 of the 245 Hacker News postings (28%), and it ranks among the top skills on the other two platforms as well.</p>
+<p>Let’s look at each source in turn.</p>
+<section id="we-work-remotely-25-remote-tech-postings" class="level3">
+<h3 class="anchored" data-anchor-id="we-work-remotely-25-remote-tech-postings">We Work Remotely: 25 Remote Tech Postings</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="WEEK2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="768"></p>
-<figcaption>Most in-demand technical skills in remote tech jobs</figcaption>
+<p><img src="wwr_skills.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Skills in demand on We Work Remotely</figcaption>
 </figure>
 </div>
+<p>React leads the pack, appearing in 40% of postings, followed closely by AWS and CI/CD. The pattern here points to a <strong>cloud-native, frontend-heavy</strong> skill set — exactly what you would expect from a remote-only job board.</p>
+</section>
+<section id="remoteok-99-remote-first-postings" class="level3">
+<h3 class="anchored" data-anchor-id="remoteok-99-remote-first-postings">RemoteOK: 99 Remote-First Postings</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="remoteok_skills.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Skills in demand on RemoteOK</figcaption>
+</figure>
 </div>
+<p>RemoteOK’s tag data tells a different story. <strong>Go</strong> and <strong>system administration</strong> dominate, reflecting a user base of infrastructure engineers and DevOps specialists. Backend skills are more prominent here than on the other platforms.</p>
+</section>
+<section id="hacker-news-245-global-tech-postings" class="level3">
+<h3 class="anchored" data-anchor-id="hacker-news-245-global-tech-postings">Hacker News: 245 Global Tech Postings</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="hn_skills.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Skills in demand on Hacker News</figcaption>
+</figure>
 </div>
+<p>The Hacker News sample is the largest and most diverse. <strong>Python</strong> leads with 69 mentions (28%), followed by <strong>TypeScript</strong> and <strong>React</strong>. This is the startup-heavy, full-stack profile — engineers who are expected to work across the entire product.</p>
 </section>
-<section id="key-findings" class="level2">
-<h2 class="anchored" data-anchor-id="key-findings">Key Findings</h2>
-<p><strong>1. Frontend frameworks lead the pack.</strong> React appears in 10 out of 25 postings (40%) — more than any other skill. This confirms that modern remote employers expect engineers to be comfortable building interactive user interfaces.</p>
-<p><strong>2. Cloud and DevOps skills are the new baseline.</strong> AWS (9), CI/CD (8), Docker (7), and Kubernetes (5) together appear in over 60% of postings. Cloud infrastructure and automated deployment are common expectations for remote engineers.</p>
-<p><strong>3. Data and database skills are expected, not optional.</strong> MongoDB (4), PostgreSQL (2), and SQL (1) appear frequently enough to confirm that remote engineers must be comfortable working with databases, even if they are not database specialists.</p>
 </section>
-<section id="actionable-recommendation" class="level2">
-<h2 class="anchored" data-anchor-id="actionable-recommendation">Actionable Recommendation</h2>
-<p><strong>If you are preparing for a remote tech career, prioritize:</strong></p>
-<ol type="1">
-<li><strong>React</strong> — it appears in 40% of postings and is the single most requested skill.</li>
-<li><strong>AWS + Docker + CI/CD</strong> — this trio of cloud and DevOps skills appears across more than half of the postings.</li>
-<li><strong>Python</strong> — the most transferable language, useful for backend, data analysis, and machine learning roles.</li>
-</ol>
+<section id="how-the-three-platforms-compare" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-three-platforms-compare">How the Three Platforms Compare</h2>
+<p>The most interesting finding is not what the platforms agree on, but where they differ.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 46%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Platform</th>
+<th>Most distinctive skill</th>
+<th>Likely reason</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>We Work Remotely</td>
+<td><strong>React</strong> (40% of postings)</td>
+<td>Curated board attracts design-forward companies</td>
+</tr>
+<tr class="even">
+<td>RemoteOK</td>
+<td><strong>Go / sys admin</strong></td>
+<td>User base of infrastructure engineers</td>
+</tr>
+<tr class="odd">
+<td>Hacker News</td>
+<td><strong>Python</strong> (28% of postings)</td>
+<td>Startup-heavy community, full-stack roles</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>The takeaway:</strong> There is no single “tech job market.” Different platforms serve different segments, and the skills that matter depend on which segment you are targeting.</p>
+</blockquote>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
-<p>This analysis covers only 25 postings from a single RSS feed at one point in time. We Work Remotely is not representative of all remote work, and counting keywords in job descriptions is a rough proxy for skill demand.</p>
+<section id="what-this-means-if-youre-learning" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-means-if-youre-learning">What This Means If You’re Learning</h2>
+<p>If you are preparing for a career in tech — or planning what to study next — the data suggests a clear priority order:</p>
+<p><strong>1. Learn Python first.</strong> It is the only language that appears near the top of every platform. It works for backend engineering, data analysis, automation, and increasingly for AI.</p>
+<p><strong>2. Add React.</strong> Frontend skills are not optional. Even backend-leaning roles increasingly expect familiarity with a modern JavaScript framework.</p>
+<p><strong>3. Build cloud and DevOps literacy.</strong> AWS, Docker, and CI/CD appear together so often that they are effectively a single requirement. You do not need to be a specialist, but you do need to be comfortable.</p>
+<p><strong>4. Learn one database well.</strong> PostgreSQL is the safest choice, but MongoDB is also common. The specific choice matters less than having real experience with schema design and queries.</p>
 </section>
-<section id="data-source" class="level2">
-<h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
-<p>All data was collected from <a href="https://weworkremotely.com">We Work Remotely</a>. The RSS feed is publicly available and does not require authentication.</p>
+<section id="what-this-analysis-cannot-tell-you" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-analysis-cannot-tell-you">What This Analysis Cannot Tell You</h2>
+<p>A few honest limitations:</p>
+<ul>
+<li><strong>It is a snapshot.</strong> The data was collected in September 2026 and reflects one moment in a fast-moving market.</li>
+<li><strong>Job postings are not hires.</strong> Employers list many skills they never actually test for. Advertised demand is a rough proxy for real demand.</li>
+<li><strong>Keyword counting is imprecise.</strong> A posting that mentions “Python” once counts the same as one that mentions it ten times.</li>
+<li><strong>Not all postings are remote.</strong> The Hacker News sample includes onsite and hybrid roles. This makes the findings broader, but less specific to remote-only hiring.</li>
+</ul>
+<p>These limitations do not undermine the findings — the patterns are strong enough to be meaningful — but they are worth keeping in mind.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Across three independent data sources and nearly 400 job postings, the same skills keep appearing: <strong>Python, React, AWS, Docker, and CI/CD</strong>.</p>
+<p>The specific mix varies by platform, but the core toolkit is remarkably consistent. For anyone preparing for a career in tech, the path is clear: start with Python, add frontend and cloud skills, and build real projects that demonstrate you can ship.</p>
+<p>The data does not predict the future. But it does describe the present — and the present is a good place to start.</p>
+<hr>
+<p><em>Data sources: <a href="https://remoteok.com">RemoteOK</a>, <a href="https://weworkremotely.com">We Work Remotely</a>, and <a href="https://news.ycombinator.com/item?id=49522897">Hacker News</a>. All scraping was done ethically using public RSS feeds, APIs, and HTML pages.</em></p>
 
 
 </section>
