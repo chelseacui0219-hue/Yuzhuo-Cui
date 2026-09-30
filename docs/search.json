@@ -81,7 +81,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Who Benefits Most from a College Degree?\n\n\n\n\n\n\n\n\nSep 22, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nWhich Technical Skills Are Most In Demand in Tech Hiring?\n\n\n\n\n\n\n\n\nSep 16, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nWeekly Blog_Omitted variable bias\n\n\n\n\n\n\n\n\nSep 9, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
+    "text": "Blog4: Does Population Growth Bring Prosperity?\n\n\n\n\n\n\n\n\nSep 29, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nWho Benefits Most from a College Degree?\n\n\n\n\n\n\n\n\nSep 22, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nWhich Technical Skills Are Most In Demand in Tech Hiring?\n\n\n\n\n\n\n\n\nSep 16, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nWeekly Blog_Omitted variable bias\n\n\n\n\n\n\n\n\nSep 9, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -327,5 +327,54 @@
     "title": "Who Benefits Most from a College Degree?",
     "section": "Conclusion",
     "text": "Conclusion\nThe college wage premium has been one of the most important features of the U.S. labor market for decades. This analysis shows that it remains large (around 70%), and is experienced very differently by different groups.\nThe most useful takeaway for a reader is this: the return to college is high, but it is not uniform. Old workers face more risk. Women now earn a larger premium than men. Understanding why is the first step toward better decisions about education, careers, and policy.\n\nData source: IPUMS CPS, Annual Social and Economic Supplement, 2002–2025. All statistics are weighted using ASECWT. Earnings are adjusted to 2010 dollars using CPI-U. Full code and data are available in the project repository."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#introduction",
+    "href": "blog/posts/WEEK4.html#introduction",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Introduction",
+    "text": "Introduction\nThe amount of population that moves between different states within the United States is quite large.There are many reasons for this flow, such as lower taxes, more job opportunities, and cheaper living cost.\nHowever, can we determine the income level of the destination state based on the direction of immigration?\nThis analysis uses data from the Federal Reserve Economic Data (FRED) system to examine population and income trends across all 50 U.S. states (plus D.C.) from 2000 to 2025. The data is retrieved programmatically through the fredr R package with API Key."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#how-to-measure",
+    "href": "blog/posts/WEEK4.html#how-to-measure",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "How to measure",
+    "text": "How to measure\nI used two annual series for each state:\n\nPopulation ({state}POP) — resident population in thousands\nPer capita personal income ({state}PCPI) — total personal income divided by population, in current dollars\n\nUsing per capita income is essential when comparing states of different sizes.\nAll dollar figures are adjusted to constant dollars using the FRED series, so comparisons across years are not distorted by inflation.\nI collected data for all 51 jurisdictions (50 states plus the District of Columbia) from 2000 through 2025 — about 2,650 observations in total."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
+    "href": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Finding 1: Growth Is Concentrated in the West and South",
+    "text": "Finding 1: Growth Is Concentrated in the West and South\n\n\n\nTop states by population growth\n\n\nThe fastest-growing states are all in the West and South: Nevada (+63%), Utah (+58%), Idaho (+56%), Texas (+51%), Arizona (+48%), and Florida (+46%).\n\n\n\nBottom states by population growth\n\n\nThe slowest-growing states are all in the Midwest and Northeast: West Virginia (-2.3%), Michigan (+1.8%), Illinois (+2.3%), Louisiana (+3.3%), and Mississippi (+3.7%).\nWest Virginia is the only state that lost population over the period. This is consistent with long-running trend of out-migration of young workers, declining coal employment, and an aging population in that area."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
+    "href": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Finding 2: Population Growth Does Not Mean Income Growth",
+    "text": "Finding 2: Population Growth Does Not Mean Income Growth\n\n\n\nPopulation growth vs. income growth\n\n\nIf population growth were a sign of economic success, we would expect the fastest-growing states to also show the fastest income growth. The data shows no such relationship.\nThe trend line in the scatter plot is almost flat. Population growth and per capita income growth are essentially uncorrelated across states.\nTwo states make this vivid:\n\nNevada: population growth of 63% (the highest in the country), but income growth of only 135% — among the lowest.\nMichigan: population growth of just 1.8%, but income growth of only 120% — the lowest in the country.\n\nNevada and Michigan sit at opposite ends of the population distribution but share a similar income trajectory. Whatever is driving income growth, it is not population growth."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#finding-3-slow-growing-states-have-bigger-internal-gaps",
+    "href": "blog/posts/WEEK4.html#finding-3-slow-growing-states-have-bigger-internal-gaps",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Finding 3: Slow-Growing States Have Bigger Internal Gaps",
+    "text": "Finding 3: Slow-Growing States Have Bigger Internal Gaps\n\n\n\nIncome trajectories by growth group\n\n\nThe final piece of the puzzle comes from looking at income levels, not growth rates.\nAmong population-fast-growing states, per capita income is relatively tight: all six states end the period between $65,000 and $77,000.\nAmong population-slow-growing states, the range is much wider: Illinois reaches nearly $80,000 by 2025, while Mississippi remains near $55,000.\nIn this case, Population growth is not a signal of prosperity, but population stagnation is not a signal of decline either. Illinois has one of the highest per capita incomes in the country while the resident number there is basically stable."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#conclusion",
+    "href": "blog/posts/WEEK4.html#conclusion",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nMigration cannot be considered as a weatherwane for income per capita Nevada, Georgia, and Delaware all grew quickly but had some of the slowest income growth in the country. Meanwhile, Illinois and New York have high and rising per capita incomes. They are losing residents to cheaper places, not to more productive ones.\nIncome growth is not driven by population. The two variables are nearly uncorrelated across states and over time. What actually drives income growth — industry mix, education levels, productivity — is a separate question."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#limitations",
+    "href": "blog/posts/WEEK4.html#limitations",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Limitations",
+    "text": "Limitations\nThis analysis has several limitations:\n\nPer capita income is a crude measure. It divides total income by total population, including children and retirees who do not earn income.\nNo cost-of-living adjustment. A dollar in Mississippi buys more than a dollar in California, but this analysis treats them as equal.\nPopulation estimates, not census counts. FRED uses annual estimates between decennial censuses, which can diverge from actual counts.\nSimple correlation. The analysis describes patterns, not causes. It does not explain why some states grow and others do not.\n\n\nData source: FRED, Federal Reserve Bank of St. Louis. State population ({state}POP) and per capita personal income ({state}PCPI), 2000–2025. All data retrieved programmatically through the fredr R package. Full code is available in the project repository."
   }
 ]
