@@ -1,5 +1,5 @@
 ---
-title: "Weekly Blog_Omitted variable bias"
+title: "Blog1: Omitted variable bias"
 author: "Yuzhuo Cui"
 date: "2026-09-09"
 output: html_document

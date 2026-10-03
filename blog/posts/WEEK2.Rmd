@@ -1,13 +1,8 @@
 ---
-title: "Which Technical Skills Are Most In Demand in Tech Hiring?"
+title: "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?"
 date: 2026-09-16
 author: Yuzhuo Cui
----
-
----
-title: "Which Technical Skills Are Most In Demand in Tech Hiring?"
-date: 2026-09-16
-author: Yuzhuo Cui
+output: html_document
 ---
 
 ## Introduction
