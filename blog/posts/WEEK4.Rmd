@@ -4,14 +4,12 @@ author: "Yuzhuo Cui"
 date: "2026-09-29"
 output: html_document
 ---
----
-
 
 ## Introduction
 
-The amount of population that moves between different states within the United States is quite large.There are many reasons for this flow, such as lower taxes, more job opportunities, and cheaper living cost. 
+The amount of population that moves between states and across countries is quite large in the United States.There are many reasons for the flow, such as lower taxes, more job opportunities, and cheaper living cost. 
 
-However, can we determine the income level of the destination state based on the direction of immigration?
+However, can we determine the income level of the destination state based on the direction of population change?
 
 This analysis uses data from the **Federal Reserve Economic Data
 (FRED)** system to examine population and income trends across
@@ -29,12 +27,12 @@ I used two annual series for each state:
 Using per capita income is essential
 when comparing states of different sizes.
 
-All dollar figures are adjusted to constant dollars using the
-FRED series, so comparisons across years are not distorted by
-inflation.
+All figures are in current (nominal) dollars. Real growth
+after inflation would be lower; this is discussed in the
+Limitations.
 
 I collected data for all 51 jurisdictions (50 states plus the
-District of Columbia) from 2000 through 2025 — about 2,650
+District of Columbia) from 2000 through 2025 — about 2,652
 observations in total.
 
 ## Finding 1: Growth Is Concentrated in the West and South
@@ -61,54 +59,36 @@ employment, and an aging population in that area.
 
 If population growth were a sign of economic success, we would
 expect the fastest-growing states to also show the fastest
-income growth. The data shows no such relationship.
+income growth. However, the data shows no such relationship. According to the scatter plot, it shows only a weak, noisy-positive relationship.
 
-The trend line in the scatter plot is **almost flat**. Population
-growth and per capita income growth are essentially uncorrelated
-across states.
+For example: **Nevada** has a population growth of 63%, which is the highest in the
+  country, but has a nominal income growth of only 135%. Meanwhile, **Utah** has a similar population growth of 58%, but Utah's nominal per capita income grew roughly 190% versus Nevada's 135%. In this case, the relationship between income and population growth is relatively week.
 
-Two states make this vivid:
-
-- **Nevada**: population growth of 63% (the highest in the
-  country), but income growth of only 135% — among the lowest.
-- **Michigan**: population growth of just 1.8%, but income
-  growth of only 120% — the lowest in the country.
-
-Nevada and Michigan sit at opposite ends of the population
-distribution but share a similar income trajectory. Whatever
-is driving income growth, it is not population growth.
-
-## Finding 3: Slow-Growing States Have Bigger Internal Gaps
+## Finding 3: Income Growth Differ More Among Slow-Growing States
 
 ![Income trajectories by growth group](income_trajectories.png){width=90%}
 
-The final piece of the puzzle comes from looking at income
-levels, not growth rates.
+Then, we collected the income growth data for the six fastest-growing states and the six slowest-growing states in terms of population growth.
 
-Among **population-fast-growing states**, per capita income is relatively
-tight: all six states end the period between $65,000 and $77,000.
+Among **population-fast-growing states**, per capita income range is relatively
+narrow: all six states end the period between $65,000 and $77,000.
 
 Among **population-slow-growing states**, the range is much wider:
 Illinois reaches nearly $80,000 by 2025, while Mississippi
 remains near $55,000.
 
 In this case, **Population growth is not a
-signal of prosperity, but population stagnation is not a
-signal of decline either.** Illinois has one of the highest
-per capita incomes in the country while the resident number there is basically stable. 
+signal of prosperity, but population stagnation is not a signal of decline either.** Illinois has one of the highest per capita incomes in the country while its population has remained roughly flat.The reason is that both population inflow and outflow exist in each state. If a state is attracting high-skilled immigrants while those leaving the state were the middle and low-income locals, the income per capita for the state would increase while population would remain stable.
 
 ## Conclusion
 
-1. **Migration cannot be considered as a weatherwane for income per capita**
-   Nevada, Georgia, and Delaware all grew quickly but had some
-   of the slowest income growth in the country. Meanwhile, Illinois and New York have high and rising per capita
-   incomes. They are losing residents to cheaper places, not
-   to more productive ones.
+1. **Population growth is not a reliable indicator of income growth.**
+   Nevada and Utah both grew quickly, but their income growth was
+   very different. Meanwhile, Illinois's population remained flat
+   while its per capita income grew steadily.
 
-2. **Income growth is not driven by population.** The two
-   variables are nearly uncorrelated across states and over
-   time. What actually drives income growth — industry mix,
-   education levels, productivity — is a separate question.
+2. **Income growth is not driven by the net change in population.** The two
+   variables are weak-correlated. Meanwhile, the locals who were leaving and the foreigners who were coming in were completely different in incomes, skills and consumption behaviors. In this case, income would be affected by other factors inside the varying population rather than absolute change in population.
 
 ## Limitations
 
@@ -117,7 +97,8 @@ This analysis has several limitations:
 - **Per capita income is a crude measure.** It divides total
   income by total population, including children and retirees
   who do not earn income.
-- **No cost-of-living adjustment.** A dollar in Mississippi
+- **No inflation and cost-of-living adjustment.** The analysis use nominal income data so the growth rates reported here include both real income growth and price
+  inflation. Meanwhile, a dollar in Mississippi
   buys more than a dollar in California, but this analysis
   treats them as equal.
 - **Population estimates, not census counts.** FRED uses
@@ -126,6 +107,10 @@ This analysis has several limitations:
 - **Simple correlation.** The analysis describes patterns,
   not causes. It does not explain why some states grow and
   others do not.
+- **Population growth combines natural increase and net migration.** This analysis cannot separate the two, so
+statements about migration specifically are not supported.
+
+
 
 ---
 
