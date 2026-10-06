@@ -7,14 +7,34 @@ output: html_document
 
 ## Introduction
 
-The amount of population that moves between states and across countries is quite large in the United States.There are many reasons for the flow, such as lower taxes, more job opportunities, and cheaper living cost. 
+Every year, hundreds of thousands of Americans move between
+states. They leave the Northeast and Midwest for the Sun Belt,
+chasing lower taxes, cheaper housing, and new job opportunities. Meanwhile, there are also immigrants from foreign countries entering different states. Their choice also includes consideration to their new life condition.
+Between 2000 and 2025, Nevada's population grew by 63%, Utah's
+by 58%, and Texas's by 51%. Meanwhile, West Virginia lost
+population, and Illinois barely grew at all.
 
-However, can we determine the income level of the destination state based on the direction of population change?
+This migration is not just a demographic fact. It is often
+treated as a signal of economic success. States that attract
+new residents are said to be "winning" — they have jobs,
+opportunities, and a future. States that lose residents are
+said to be "declining."
+
+But is that true? Does population growth actually mean that the
+people living in a state are becoming richer? Or are migrants
+moving to places that are cheaper — not necessarily more
+prosperous?
 
 This analysis uses data from the **Federal Reserve Economic Data
 (FRED)** system to examine population and income trends across
 all 50 U.S. states (plus D.C.) from 2000 to 2025. The data is
-retrieved programmatically through the `fredr` R package with API Key. 
+retrieved programmatically through the `fredr` R package, so
+the entire analysis is reproducible.
+
+The answer, it turns out, is more nuanced than the headline
+numbers suggest. **Population growth and income growth are two
+different things** — and confusing them can lead to the wrong
+conclusions about which states are doing well.
 
 ## How to measure
 
@@ -82,13 +102,33 @@ signal of prosperity, but population stagnation is not a signal of decline eithe
 
 ## Conclusion
 
-1. **Population growth is not a reliable indicator of income growth.**
-   Nevada and Utah both grew quickly, but their income growth was
-   very different. Meanwhile, Illinois's population remained flat
-   while its per capita income grew steadily.
 
-2. **Income growth is not driven by the net change in population.** The two
-   variables are weak-correlated. Meanwhile, the locals who were leaving and the foreigners who were coming in were completely different in incomes, skills and consumption behaviors. In this case, income would be affected by other factors inside the varying population rather than absolute change in population.
+This analysis leads to three takeaways:
+
+1. **Population growth is not a reliable indicator of income
+   growth.** Nevada and Utah both grew quickly, but their
+   income growth was very different. Meanwhile, Illinois's
+   population remained flat while its per capita income grew
+   steadily.
+
+2. **Income growth is not driven by the net change in
+   population.** The two variables are only weakly correlated.
+   The people who leave a state and the people who arrive are
+   different in income, skills, and consumption behavior. As a
+   result, income is affected by who is in the population, not
+   just how many people there are.
+
+3. **The composition of migration matters more than the
+   headline number.** A state can grow quickly and remain
+   poor, or stagnate and remain rich. The interesting question
+   is not "how many people moved in?" but "who moved in, and
+   who moved out?"
+
+**What should a reader take away from this?** If you are
+deciding where to live, do not assume that fast-growing states
+are richer or that slow-growing states are declining. The two
+are only loosely connected. Population change is a useful
+signal, but it is not the same as economic prosperity.
 
 ## Limitations
 
