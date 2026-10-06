@@ -6,21 +6,31 @@ Author: Yuzhuo Cui
 
 ## Introduction
 
-Is a college degree still worth it? It is a debated
-questions especially facing the varying market conditions and rapidly evolving industries. 
+Is a college degree still worth it? This question is asked every
+year, but it has become more urgent as the labor market shifts.
+Industries that once guaranteed stable careers are shrinking,
+remote work has changed where and how people earn, and the cost
+of tuition keeps rising. For a high school student deciding
+whether to enroll, for a parent helping pay, and for a
+policymaker designing education policy, the answer matters.
 
-This analysis uses microeconomic data from the **IPUMS Current Population
-Survey (CPS)** to measure the college wage premium — the
-percentage difference in median annual earnings between
-bachelor's degree holders and high school graduates — from
-2002 to 2025.
+The common way to answer this question is to look at the
+**college wage premium** — the gap in earnings between workers
+with a bachelor's degree and workers with only a high school
+diploma. If the premium is large, the financial case for
+college is strong. If it is shrinking, the case weakens.
+
+This analysis uses microdata from the **IPUMS Current Population
+Survey (CPS)** to measure the college wage premium from 2002 to
+2025, and to see how it differs across age groups and gender.
 
 The headline result: **the premium is large (around 70%) and
-stable**, but it is experienced very differently by different
-groups. Young workers face more volatility. Women now enjoy
-a larger and faster-growing premium than men. Understanding
-these differences matters for anyone making decisions about
-education, careers, or policy.
+stable overall**, but it is experienced very differently by
+different groups. **Older workers without a degree face more
+volatility in their earnings.** Women now enjoy a larger and
+faster-growing premium than men. Understanding these differences
+matters for anyone making decisions about education, careers,
+or policy — and it is the central point of this post.
 
 ## How I Measured It
 
@@ -152,11 +162,30 @@ features of the U.S. labor market. This analysis shows it is
 large (around 70%) and experienced very differently across
 groups:
 
-1. **The premium is not growing steadily** since 2015 — it fell through 2022 and partially recovered by 2025. 
-2. **Old workers (55-64) face more volatility** than younger
-   generation among workers without a degree.
-3. **The gender gap in the college premium has widened.** women's premium rose steadily to 85.7% by 2025, while
-men's was more volatile and reached 75.0%. 
+1. **The premium is not growing steadily.** Since 2015, it fell
+   through 2022 and partially recovered by 2025. The V-shape
+   suggests it responds to labor market shocks, not to a steady
+   increase in the value of a degree.
+
+2. **Older workers without a degree face the most volatility.**
+   The 55–64 group saw high school earnings swing by $4,000 over
+   two decades, while bachelor's earnings barely moved. The
+   premium moves because the alternative moves.
+
+3. **The gender gap in the college premium has widened.**
+   Women's premium rose steadily to 85.7% by 2025, while men's
+   was more volatile and reached 75.0%. A higher premium for
+   women does not mean higher absolute wages — it means the
+   gap between degree and non-degree workers is larger for women.
+
+**What should a reader take away from this?** The college
+premium is not just a measure of what a degree is worth. It is
+a measure of the *gap* between two paths — and that gap depends
+as much on what happens to workers without a degree as it does
+on what happens to workers with one. When the premium rises, it
+may be because college became more valuable — or because the
+alternative became worse. Both have happened in the U.S. over
+the past two decades, and both are visible in this data.
 
 
 
