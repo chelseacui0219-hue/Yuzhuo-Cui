@@ -125,8 +125,8 @@ This analysis leads to three takeaways:
    who moved out?"
 
 **What should a reader take away from this?** If you are
-deciding where to live, do not assume that fast-growing states
-are richer or that slow-growing states are declining. The two
+deciding where to live, do not assume that population fast-growing states
+are richer or that population slow-growing states are declining. The two
 are only loosely connected. Population change is a useful
 signal, but it is not the same as economic prosperity.
 
