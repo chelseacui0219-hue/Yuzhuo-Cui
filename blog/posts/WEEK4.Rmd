@@ -3,6 +3,7 @@ title: "Blog4: Does Population Growth Bring Prosperity?"
 author: "Yuzhuo Cui"
 date: "2026-09-29"
 output: html_document
+image: "images/pop_growth_top.png"
 ---
 
 ## Introduction
