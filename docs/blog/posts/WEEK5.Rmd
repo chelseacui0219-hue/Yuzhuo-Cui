@@ -1,6 +1,6 @@
 ---
 title: "Blog5: The Geography of Income in Pennsylvania"
-date: 2026-10-07
+date: "2026-10-07"
 author: "Yuzhuo Cui"
 output: html_document
 ---
