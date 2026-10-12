@@ -14,256 +14,60 @@
     "text": "Resume PDF"
   },
   {
-    "objectID": "blog/posts/WEEK2.html",
-    "href": "blog/posts/WEEK2.html",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "objectID": "blog/posts/WEEK5.html",
+    "href": "blog/posts/WEEK5.html",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
     "section": "",
-    "text": "Tech hiring has always been competitive, while the skills employers ask for shift constantly. With hundreds of languages, frameworks, and tools competing for attention, it is hard to know where to focus employees’ learning.\nThis analysis scrapes job postings from three independent sources to answer below question:\nWhich technical skills appear most frequently in tech job postings?"
+    "text": "Where you live and how much you earn are closely connected. In the United States, income is not distributed randomly across space. High-income households cluster in certain neighborhoods, low-income households cluster in others, and the boundary between them is often sharp.\nPennsylvania is a useful place to study this pattern. It contains two major metropolitan areas, Philadelphia and Pittsburgh, as well as large stretches of rural land and older industrial towns. If income is spatially concentrated, Pennsylvania should show it.\nThis analysis uses census tract data from the American Community Survey (ACS) to map median household income across all 3,383 tracts in Pennsylvania. A census tract is a small geographic unit, typically containing 1,200 to 8,000 people, which is small enough to reveal neighborhood-level patterns that county or city averages would hide.\nThe question this passage wants to answer is: where are high-income and low-income areas concentrated in Pennsylvania, and what does that pattern reveal about economic geography?\nThe answer turns out to be a story about scale. Income segregation appears at three levels, the state, the metropolitan area, and the neighborhood, and each level tells a different part of the story."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#introduction",
-    "href": "blog/posts/WEEK2.html#introduction",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "objectID": "blog/posts/WEEK5.html#introduction",
+    "href": "blog/posts/WEEK5.html#introduction",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
     "section": "",
-    "text": "Tech hiring has always been competitive, while the skills employers ask for shift constantly. With hundreds of languages, frameworks, and tools competing for attention, it is hard to know where to focus employees’ learning.\nThis analysis scrapes job postings from three independent sources to answer below question:\nWhich technical skills appear most frequently in tech job postings?"
+    "text": "Where you live and how much you earn are closely connected. In the United States, income is not distributed randomly across space. High-income households cluster in certain neighborhoods, low-income households cluster in others, and the boundary between them is often sharp.\nPennsylvania is a useful place to study this pattern. It contains two major metropolitan areas, Philadelphia and Pittsburgh, as well as large stretches of rural land and older industrial towns. If income is spatially concentrated, Pennsylvania should show it.\nThis analysis uses census tract data from the American Community Survey (ACS) to map median household income across all 3,383 tracts in Pennsylvania. A census tract is a small geographic unit, typically containing 1,200 to 8,000 people, which is small enough to reveal neighborhood-level patterns that county or city averages would hide.\nThe question this passage wants to answer is: where are high-income and low-income areas concentrated in Pennsylvania, and what does that pattern reveal about economic geography?\nThe answer turns out to be a story about scale. Income segregation appears at three levels, the state, the metropolitan area, and the neighborhood, and each level tells a different part of the story."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#data-collection",
-    "href": "blog/posts/WEEK2.html#data-collection",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Collection",
-    "text": "Data Collection\nI used the rvest package in R to parse the public RSS feed from We Work Remotely’s programming jobs category.\n\nlibrary(rvest)\nlibrary(dplyr)\nlibrary(tibble)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nurl &lt;- \"https://weworkremotely.com/categories/remote-programming-jobs.rss\"\npage &lt;- read_html(url)\nitems &lt;- page %&gt;% html_elements(\"item\")\n\nlength(items)\n\n[1] 25"
+    "objectID": "blog/posts/WEEK5.html#how-i-measured-it",
+    "href": "blog/posts/WEEK5.html#how-i-measured-it",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "How I Measured It",
+    "text": "How I Measured It\nI used data from the 2022 ACS 5-year estimates, published by the U.S. Census Bureau. The key variable is B19013_001 — median household income, in inflation-adjusted dollars.\nWhy median. Household income is strongly right-skewed. A small number of very high earners pull the mean far above the typical household. The median is less affected by those extreme values, so it better represents what a typical household earns.\nWhy census tracts. Counties and cities are too large to capture neighborhood-level variation. For example, the county-level median income hides the fact that some neighborhoods are among the wealthiest in the state while others are among the poorest. Census tracts reveal this variation with more precise division.\nData cleaning. I removed tracts with missing income estimates (62 tracts) and one tract with an empty geometry. The final sample contains 3,383 tracts, covering all 67 counties in Pennsylvania."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#data-cleaning",
-    "href": "blog/posts/WEEK2.html#data-cleaning",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Cleaning",
-    "text": "Data Cleaning\nEach RSS &lt;item&gt; contains a title, region, category, publication date, and a full job description. I extracted all five fields into a tidy data frame.\n\ntitles       &lt;- items %&gt;% html_element(\"title\") %&gt;% html_text2()\nregions      &lt;- items %&gt;% html_element(\"region\") %&gt;% html_text2()\ncategories   &lt;- items %&gt;% html_element(\"category\") %&gt;% html_text2()\ndates        &lt;- items %&gt;% html_element(\"pubdate\") %&gt;% html_text2()\ndescriptions &lt;- items %&gt;% html_element(\"description\") %&gt;% html_text2()\n\njobs &lt;- tibble(\n  title       = titles,\n  region      = regions,\n  category    = categories,\n  date        = dates,\n  description = descriptions\n)\n\nglimpse(jobs)\n\nRows: 25\nColumns: 5\n$ title       &lt;chr&gt; \"Alphorm: Formateur IT Indépendant Cybersécurité, IA, Clou…\n$ region      &lt;chr&gt; \"Anywhere in the World\", \"Anywhere in the World\", \"Anywher…\n$ category    &lt;chr&gt; \"Full-Stack Programming\", \"Full-Stack Programming\", \"Full-…\n$ date        &lt;chr&gt; \"Tue, 18 Aug 2026 20:35:03 +0000\", \"Tue, 18 Aug 2026 20:34…\n$ description &lt;chr&gt; \"&lt;p&gt; &lt;strong&gt;Headquarters:&lt;/strong&gt; 6 Rue dArmaillé Paris,…"
+    "objectID": "blog/posts/WEEK5.html#finding-1-income-is-concentrated-at-the-state-level",
+    "href": "blog/posts/WEEK5.html#finding-1-income-is-concentrated-at-the-state-level",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 1: Income Is Concentrated at the State Level",
+    "text": "Finding 1: Income Is Concentrated at the State Level\n\n\n\nThe geography of income in Pennsylvania\n\n\nThe first map shows median household income for every tract in Pennsylvania, colored by income quintile (each color contains 20% of tracts).\nThe pattern is clear. The lowest-income tracts (dark blue) are concentrated in: - Center City Philadelphia and its surrounding neighborhoods - Inner Pittsburgh - Older industrial towns such as Erie, Scranton, and Reading\nThe highest-income tracts (orange and red) are concentrated in: - Philadelphia’s western suburbs (the Main Line) - Pittsburgh’s northern and eastern suburbs - A few university towns (State College, University Park)\nThe middle of the state, which is the large rural area between the two metropolitan regions, is almost entirely middle-income (yellow and light blue). There are less extreme values in these regions.\nWhat this means. Income in Pennsylvania is not evenly distributed across space. It is clustered into two main high-income zones (the Philadelphia and Pittsburgh metro areas) and a few smaller ones, surrounded by a large middle-income rural region."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#analysis",
-    "href": "blog/posts/WEEK2.html#analysis",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Analysis",
-    "text": "Analysis\nI defined a list of 30 common technical skills and counted how many job descriptions mention each one. I used word-boundary regex (\\\\b) to avoid false matches — for example, ensuring that “Java” does not match “JavaScript”, and that “AI” does not match “email”.\n\nskills_list &lt;- c(\n  \"Python\", \"JavaScript\", \"TypeScript\", \"Java\", \"Golang\",\n  \"React\", \"Vue\", \"Angular\", \"Node\", \"Django\", \"Flask\",\n  \"SQL\", \"PostgreSQL\", \"MySQL\", \"MongoDB\",\n  \"AWS\", \"Azure\", \"GCP\", \"Docker\", \"Kubernetes\",\n  \"Git\", \"CI/CD\", \"GraphQL\",\n  \"Machine Learning\", \"TensorFlow\", \"PyTorch\",\n  \"HTML\", \"CSS\", \"Linux\", \"Bash\"\n)\n\nskill_counts &lt;- tibble(\n  skill = skills_list,\n  n = map_int(skills_list, function(s) {\n    sum(str_detect(jobs$description,\n                   regex(paste0(\"\\\\b\", s, \"\\\\b\"), ignore_case = TRUE)))\n  })\n) |&gt;\n  filter(n &gt; 0) |&gt;\n  arrange(desc(n))\n\nprint(skill_counts, n = 30)\n\n# A tibble: 21 × 2\n   skill                n\n   &lt;chr&gt;            &lt;int&gt;\n 1 React                8\n 2 AWS                  8\n 3 CI/CD                8\n 4 CSS                  6\n 5 Docker               5\n 6 Python               4\n 7 MongoDB              3\n 8 Azure                3\n 9 Kubernetes           3\n10 Git                  3\n11 HTML                 3\n12 TypeScript           2\n13 Java                 2\n14 Node                 2\n15 SQL                  2\n16 GCP                  2\n17 GraphQL              2\n18 Machine Learning     2\n19 JavaScript           1\n20 Linux                1\n21 Bash                 1\n\n\n\nskill_counts |&gt;\n  mutate(skill = reorder(skill, n)) |&gt;\n  ggplot(aes(x = n, y = skill)) +\n  geom_col(fill = \"#2c7fb8\") +\n  geom_text(aes(label = n), hjust = -0.3, size = 4) +\n  labs(\n    title = \"Most In-Demand Technical Skills in Remote Jobs\",\n    subtitle = \"Based on 25 job postings from We Work Remotely\",\n    x = \"Number of postings mentioning this skill\",\n    y = NULL,\n    caption = \"Data source: We Work Remotely (https://weworkremotely.com)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  expand_limits(x = max(skill_counts$n) * 1.2)\n\n\n\n\nMost in-demand technical skills in remote tech jobs"
+    "objectID": "blog/posts/WEEK5.html#finding-2-income-quintiles-cluster-spatially",
+    "href": "blog/posts/WEEK5.html#finding-2-income-quintiles-cluster-spatially",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 2: Income Quintiles Cluster Spatially",
+    "text": "Finding 2: Income Quintiles Cluster Spatially\n\n\n\nIncome quintiles cluster spatially\n\n\nThe second map isolates the top and bottom quintiles to make the clustering more visible.\nTwo patterns stand out:\n\nHigh-income tracts (red) form a dense, contiguous block in southeastern Pennsylvania, stretching from Philadelphia westward into Chester and Montgomery counties. This is a large and connected region of affluence rather than a scattering of rich neighborhoods.\nLow-income tracts (dark blue) also cluster, but in different places: inner Philadelphia, inner Pittsburgh, and a string of smaller cities along the Susquehanna and Lehigh rivers.\n\nThe key finding is that rich and poor tracts are adjacent to each other and form coherent geographic regions. The boundary between a red tract and a blue tract is often a single street."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#key-findings",
-    "href": "blog/posts/WEEK2.html#key-findings",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Key Findings",
-    "text": "Key Findings\n1. Frontend frameworks lead the pack. React appears in 10 out of 25 postings (40%) — more than any other skill. This confirms that modern remote employers expect engineers to be comfortable building interactive user interfaces.\n2. Cloud and DevOps skills are the new baseline. AWS (9), CI/CD (8), Docker (7), and Kubernetes (5) together appear in over 60% of postings. Cloud infrastructure and automated deployment are common expectations for remote engineers.\n3. Data and database skills are expected, not optional. MongoDB (4), PostgreSQL (2), and SQL (1) appear frequently enough to confirm that remote engineers must be comfortable working with databases, even if they are not database specialists."
+    "objectID": "blog/posts/WEEK5.html#finding-3-income-segregation-within-philadelphia",
+    "href": "blog/posts/WEEK5.html#finding-3-income-segregation-within-philadelphia",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 3: Income Segregation Within Philadelphia",
+    "text": "Finding 3: Income Segregation Within Philadelphia\n\n\n\nIncome segregation within Philadelphia\n\n\nThe third map zooms into Philadelphia to show what income segregation looks like at the neighborhood level.\nThe pattern is striking. North Philadelphia and Kensington, which are the large sections of the city, are almost entirely dark blue (bottom quintile). Center City is light green (middle quintile, not top). Chestnut Hill and parts of South Philadelphia are orange (top quintile).\nSo we could make several conclusions:\n\nCenter City is not the richest part of the city. Although many tall buildings are concentrated in this economic center, many students and renters are also living in the region. so the median household income is only in the middle quintile. The wealthiest tracts are in the northwest and along the southern edge.\nLow-income neighborhoods form a contiguous corridor running north from Center City. It reflects decades of disinvestment, redlining, and the geography of public housing.\nHigh-income neighborhoods are small and separated. Unlike the poor neighborhoods, which form large continuous areas, the wealthy neighborhoods are smaller and often isolated from each other by middle-income tracts."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#actionable-recommendation",
-    "href": "blog/posts/WEEK2.html#actionable-recommendation",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Actionable Recommendation",
-    "text": "Actionable Recommendation\nIf you are preparing for a remote tech career, prioritize:\n\nReact — it appears in 40% of postings and is the single most requested skill.\nAWS + Docker + CI/CD — this trio of cloud and DevOps skills appears across more than half of the postings.\nPython — the most transferable language, useful for backend, data analysis, and machine learning roles."
+    "objectID": "blog/posts/WEEK5.html#conclusion",
+    "href": "blog/posts/WEEK5.html#conclusion",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Conclusion",
+    "text": "Conclusion\nThe spatial patterns in these three maps reveal three things about economic geography in Pennsylvania:\n1. Income is not distributed randomly. It clusters into recognizable regions: some rich, some poor, most in between. This clustering is visible at every scale, from the whole state down to individual neighborhoods.\n2. Segregation is not just about income levels. It is about spatial adjacency. A state where rich and poor neighborhoods are next to each other looks very different from a state where they are separated by large middle-income buffers. For Pennsylvania, high-income regions concentrated in the southeast and southwest, low-income regions concentrated in inner cities and older industrial towns, and a vast middle-income rural interior.\n3. Scale matters. A county-level map would show Philadelphia and Pittsburgh as relatively poor and their suburbs as relatively rich. But the tract-level map shows that the story is more complicated: within Philadelphia, some neighborhoods are among the wealthiest in the state, and within the suburbs, some tracts are middle-income. Aggregation hides these patterns.\nWhat should a reader take away? The map is not just a picture of where people live. It is a picture of opportunity — access to good schools, safe streets, and high-paying jobs is distributed unevenly across space, and the boundaries are often sharp. This is the geography that policy has to work with."
   },
   {
-    "objectID": "blog/posts/WEEK2.html#limitations",
-    "href": "blog/posts/WEEK2.html#limitations",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
+    "objectID": "blog/posts/WEEK5.html#limitations",
+    "href": "blog/posts/WEEK5.html#limitations",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
     "section": "Limitations",
-    "text": "Limitations\nThis analysis covers only 25 postings from a single RSS feed at one point in time. We Work Remotely is not representative of all remote work, and counting keywords in job descriptions is a rough proxy for skill demand."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#data-source",
-    "href": "blog/posts/WEEK2.html#data-source",
-    "title": "Weekly Blog 2: What Skills Do Remote Tech Employers Actually Want?",
-    "section": "Data Source",
-    "text": "Data Source\nAll data was collected from We Work Remotely. The RSS feed is publicly available and does not require authentication."
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Blog1: Omitted Variable Bias — Why ‘Significant’ Isn’t Enough\n\n\n\n\n\n\n\n\nOct 5, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nBlog4: Does Population Growth Bring Prosperity?\n\n\n\n\n\n\n\n\nSep 29, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nBlog3: Who Benefits Most from a College Degree?\n\n\n\n\n\n\n\n\nSep 22, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nBlog2: Which Technical Skills Are Most In Demand in Tech Hiring?\n\n\n\n\n\n\n\n\nSep 16, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "bio.html",
-    "href": "bio.html",
-    "title": "About Me",
-    "section": "",
-    "text": "I am currently a Master’s student in Applied Economics and Data Science at the University of Pennsylvania, expected to graduate in 2027. Prior to this, I completed my Bachelor’s degree in Economics and Finance at The University of Hong Kong, where I graduated with a cumulative GPA of 3.99/4.3.\nI am passionate about leveraging data-driven approaches to solve complex economic and financial problems. My academic and professional experiences have equipped me with strong quantitative skills and a deep interest in applying computational methods to real-world business challenges."
-  },
-  {
-    "objectID": "bio.html#education",
-    "href": "bio.html#education",
-    "title": "About Me",
-    "section": "Education",
-    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Bachelor of Economics and Finance, Minor in Statistics, The University of Hong Kong, 2026"
-  },
-  {
-    "objectID": "bio.html#interests",
-    "href": "bio.html#interests",
-    "title": "About Me",
-    "section": "Interests",
-    "text": "Interests\n\nInequality\nSurvey method\nData Analysis"
-  },
-  {
-    "objectID": "bio.html#contact",
-    "href": "bio.html#contact",
-    "title": "About Me",
-    "section": "Contact",
-    "text": "Contact"
-  },
-  {
-    "objectID": "bio.html#yuzhuocsas.upenn.edu",
-    "href": "bio.html#yuzhuocsas.upenn.edu",
-    "title": "About Me",
-    "section": "yuzhuoc@sas.upenn.edu",
-    "text": "yuzhuoc@sas.upenn.edu"
-  },
-  {
-    "objectID": "blog/posts/post1/Untitled.html",
-    "href": "blog/posts/post1/Untitled.html",
-    "title": "My First Blog Post",
-    "section": "",
-    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
-  },
-  {
-    "objectID": "blog/posts/WEEK1.html",
-    "href": "blog/posts/WEEK1.html",
-    "title": "Blog1: Omitted Variable Bias — Why ‘Significant’ Isn’t Enough",
-    "section": "",
-    "text": "Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales, and the coefficient comes out “statistically significant.” Someone could argue from that coefficient that ice cream causes drowning.\nBut the two are not causing each other. They are both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on ice cream quietly picks up weather’s effect.\nThis is omitted variable bias (OVB). It is one of the most common mistakes in applied economics, and it is dangerous because it does not announce itself. The coefficient looks significant, the t-statistic is large, and the model fits the data — but the estimate is wrong.\nThis post has two goals. First, to explain OVB clearly with a simulated example. Second, to show that the same bias appears in real data — using a large microdata sample from the IPUMS Current Population Survey. The question is simple: when we control for a variable that belongs in the model, how much does the estimated effect change?"
-  },
-  {
-    "objectID": "blog/posts/WEEK1.html#a-tiny-demo",
-    "href": "blog/posts/WEEK1.html#a-tiny-demo",
-    "title": "Weekly Blog_Omitted variable bias",
-    "section": "",
-    "text": "Make some data where weather drives both, and ice cream has nothing to do with drowning:\n\nset.seed(1)\nn &lt;- 200\n\ntemp     &lt;- rnorm(n, 80, 10)            # hot weather\nicecream &lt;- 5 * temp + rnorm(n, 0, 20)  # weather drives ice cream\ndrowning &lt;- 2 * temp + rnorm(n, 0, 5)   # weather drives drownings\n\nm_bad  &lt;- lm(drowning ~ icecream)        # leave weather out\nm_good &lt;- lm(drowning ~ icecream + temp) # put weather back in\n\nc(without_weather = coef(m_bad)[\"icecream\"],\n  with_weather    = coef(m_good)[\"icecream\"])\n\nwithout_weather.icecream    with_weather.icecream \n             0.344051514             -0.006568652 \n\n\nWithout weather, the ice cream coefficient is around 0.34 and looks significant — enough to write a headline about ice cream and drowning. Add weather and it drops to about zero. 0.34 was not ice cream’s strong effect to the drowning data, but was the weather’s effect hiding inside the ice cream variablee."
-  },
-  {
-    "objectID": "blog/posts/WEEK1.html#the-formula-one-line",
-    "href": "blog/posts/WEEK1.html#the-formula-one-line",
-    "title": "Weekly Blog_Omitted variable bias",
-    "section": "",
-    "text": "The same point can be written down. If the truth is \\(y = \\beta_1 x + \\beta_2 z + u\\) but you estimate \\(y \\sim x\\), the coefficient converges to\n\\[\\beta_1 + \\beta_2\\,\\delta, \\qquad \\delta = \\frac{\\mathrm{Cov}(x,z)}{\\mathrm{Var}(x)}.\\]\nThe bias is \\(\\beta_2\\delta\\): how strongly the omitted variable moves \\(y\\) (\\(\\beta_2\\)), times how tightly it moves with the variable you kept (\\(\\delta\\)). For ice cream, both are positive, so the number comes out too big — and you can usually tell which direction the error runs just by thinking about those two signs."
-  },
-  {
-    "objectID": "blog/posts/WEEK1.html#final",
-    "href": "blog/posts/WEEK1.html#final",
-    "title": "Weekly Blog_Omitted variable bias",
-    "section": "",
-    "text": "The ice cream and drowning case is obvious, but when omitted variable bias happens in real life macro data, it is somehow hard to identify. For example, the bias variable inside the testing of new medicine on certain disease. In this case, it is important and necessary to apply panel data method or use proxy variables."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Yuzhuo Cui",
-    "section": "",
-    "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html",
-    "href": "blog2/output/weekly_blog_2.html",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "",
-    "text": "Tech hiring has always been competitive, but the skills employers ask for shift constantly. With hundreds of languages, frameworks, and tools competing for attention, it is hard to know where to focus your learning.\nThis analysis scrapes job postings from three independent sources to answer a simple question:\nWhich technical skills appear most frequently in tech job postings?\nThe answer turns out to be surprisingly consistent across platforms."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#introduction",
-    "href": "blog2/output/weekly_blog_2.html#introduction",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "",
-    "text": "Tech hiring has always been competitive, but the skills employers ask for shift constantly. With hundreds of languages, frameworks, and tools competing for attention, it is hard to know where to focus your learning.\nThis analysis scrapes job postings from three independent sources to answer a simple question:\nWhich technical skills appear most frequently in tech job postings?\nThe answer turns out to be surprisingly consistent across platforms."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#where-the-data-comes-from",
-    "href": "blog2/output/weekly_blog_2.html#where-the-data-comes-from",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "Where the Data Comes From",
-    "text": "Where the Data Comes From\nI collected job postings from three different platforms, each representing a different slice of the tech hiring market:\n\n\n\n\n\n\n\n\nSource\nWhat it covers\nPostings\n\n\n\n\nRemoteOK\nA curated remote-first job board with structured skill tags\n99\n\n\nWe Work Remotely\nA remote-only job board with detailed descriptions\n25\n\n\nHacker News “Who is Hiring?”\nGlobal startup and tech hiring, updated monthly\n245\n\n\n\nTogether these sources cover a wide range of employers: from remote-first startups to established tech companies and traditional firms hiring across onsite, hybrid, and remote arrangements.\nThree sources are better than one. Each platform attracts a different kind of employer, so combining them reduces the risk of drawing conclusions from a single, biased sample."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#the-skills-that-keep-appearing",
-    "href": "blog2/output/weekly_blog_2.html#the-skills-that-keep-appearing",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "The Skills That Keep Appearing",
-    "text": "The Skills That Keep Appearing\nThe clearest pattern across all three datasets is the dominance of Python. It appears in 69 of the 245 Hacker News postings (28%), and it ranks among the top skills on the other two platforms as well.\nLet’s look at each source in turn.\n\nWe Work Remotely: 25 Remote Tech Postings\n\n\n\nSkills in demand on We Work Remotely\n\n\nReact leads the pack, appearing in 40% of postings, followed closely by AWS and CI/CD. The pattern here points to a cloud-native, frontend-heavy skill set — exactly what you would expect from a remote-only job board.\n\n\nRemoteOK: 99 Remote-First Postings\n\n\n\nSkills in demand on RemoteOK\n\n\nRemoteOK’s tag data tells a different story. Go and system administration dominate, reflecting a user base of infrastructure engineers and DevOps specialists. Backend skills are more prominent here than on the other platforms.\n\n\nHacker News: 245 Global Tech Postings\n\n\n\nSkills in demand on Hacker News\n\n\nThe Hacker News sample is the largest and most diverse. Python leads with 69 mentions (28%), followed by TypeScript and React. This is the startup-heavy, full-stack profile — engineers who are expected to work across the entire product."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#how-the-three-platforms-compare",
-    "href": "blog2/output/weekly_blog_2.html#how-the-three-platforms-compare",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "How the Three Platforms Compare",
-    "text": "How the Three Platforms Compare\nThe most interesting finding is not what the platforms agree on, but where they differ.\n\n\n\n\n\n\n\n\nPlatform\nMost distinctive skill\nLikely reason\n\n\n\n\nWe Work Remotely\nReact (40% of postings)\nCurated board attracts design-forward companies\n\n\nRemoteOK\nGo / sys admin\nUser base of infrastructure engineers\n\n\nHacker News\nPython (28% of postings)\nStartup-heavy community, full-stack roles\n\n\n\n\nThe takeaway: There is no single “tech job market.” Different platforms serve different segments, and the skills that matter depend on which segment you are targeting."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#what-this-means-if-youre-learning",
-    "href": "blog2/output/weekly_blog_2.html#what-this-means-if-youre-learning",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "What This Means If You’re Learning",
-    "text": "What This Means If You’re Learning\nIf you are preparing for a career in tech — or planning what to study next — the data suggests a clear priority order:\n1. Learn Python first. It is the only language that appears near the top of every platform. It works for backend engineering, data analysis, automation, and increasingly for AI.\n2. Add React. Frontend skills are not optional. Even backend-leaning roles increasingly expect familiarity with a modern JavaScript framework.\n3. Build cloud and DevOps literacy. AWS, Docker, and CI/CD appear together so often that they are effectively a single requirement. You do not need to be a specialist, but you do need to be comfortable.\n4. Learn one database well. PostgreSQL is the safest choice, but MongoDB is also common. The specific choice matters less than having real experience with schema design and queries."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#what-this-analysis-cannot-tell-you",
-    "href": "blog2/output/weekly_blog_2.html#what-this-analysis-cannot-tell-you",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "What This Analysis Cannot Tell You",
-    "text": "What This Analysis Cannot Tell You\nA few honest limitations:\n\nIt is a snapshot. The data was collected in September 2026 and reflects one moment in a fast-moving market.\nJob postings are not hires. Employers list many skills they never actually test for. Advertised demand is a rough proxy for real demand.\nKeyword counting is imprecise. A posting that mentions “Python” once counts the same as one that mentions it ten times.\nNot all postings are remote. The Hacker News sample includes onsite and hybrid roles. This makes the findings broader, but less specific to remote-only hiring.\n\nThese limitations do not undermine the findings — the patterns are strong enough to be meaningful — but they are worth keeping in mind."
-  },
-  {
-    "objectID": "blog2/output/weekly_blog_2.html#conclusion",
-    "href": "blog2/output/weekly_blog_2.html#conclusion",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "Conclusion",
-    "text": "Conclusion\nAcross three independent data sources and nearly 400 job postings, the same skills keep appearing: Python, React, AWS, Docker, and CI/CD.\nThe specific mix varies by platform, but the core toolkit is remarkably consistent. For anyone preparing for a career in tech, the path is clear: start with Python, add frontend and cloud skills, and build real projects that demonstrate you can ship.\nThe data does not predict the future. But it does describe the present — and the present is a good place to start.\n\nData sources: RemoteOK, We Work Remotely, and Hacker News. All scraping was done ethically using public RSS feeds, APIs, and HTML pages."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#where-the-data-comes-from",
-    "href": "blog/posts/WEEK2.html#where-the-data-comes-from",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "Where the Data Comes From",
-    "text": "Where the Data Comes From\nI collected job postings from three different platforms, each representing a different slice of the tech hiring market:\n\n\n\n\n\n\n\n\nSource\nWhat it covers\nPostings\n\n\n\n\nRemoteOK\nA curated remote-first job board with structured skill tags\n99\n\n\nWe Work Remotely\nA remote-only job board with detailed descriptions\n25\n\n\nHacker News “Who is Hiring?”\nGlobal startup and tech hiring, updated monthly\n245\n\n\n\nTogether these sources cover a certain amount of employers and postings, such as tech companies including startups and traditional companies that hiring across onsite, hybrid, and remote arrangements.\nEach platform attracts a different kind of employer, so combining them reduces the risk of drawing conclusions from a single, biased sample."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#the-skills-that-keep-appearing",
-    "href": "blog/posts/WEEK2.html#the-skills-that-keep-appearing",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "The Skills That Keep Appearing",
-    "text": "The Skills That Keep Appearing\nThe clearest pattern across all three datasets is the dominance of Python. It appears in 69 of the 245 Hacker News postings (28%), and it ranks among the top skills on the other two platforms as well.\nLet’s look at each source in turn.\n\nWe Work Remotely: 25 Remote Tech Postings\n\n\n\nSkills in demand on We Work Remotely\n\n\nReact leads the pack, appearing in 40% of postings, followed closely by AWS and CI/CD. The pattern here points to a cloud-native, frontend-heavy skill set — exactly what you would expect from a remote-only job board.\n\n\nRemoteOK: 99 Remote-First Postings\n\n\n\nSkills in demand on RemoteOK\n\n\nRemoteOK’s tag data tells a different story. Go and system administration dominate, reflecting a user base of infrastructure engineers and DevOps specialists. Backend skills are more prominent here than on the other platforms.\n\n\nHacker News: 245 Global Tech Postings\n\n\n\nSkills in demand on Hacker News\n\n\nThe Hacker News sample is the largest and most diverse. Python leads with 69 mentions (28%), followed by TypeScript and React. This is the startup-heavy, full-stack profile — engineers who are expected to work across the entire product."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#how-the-three-platforms-compare",
-    "href": "blog/posts/WEEK2.html#how-the-three-platforms-compare",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "How the Three Platforms Compare",
-    "text": "How the Three Platforms Compare\nThe most interesting finding is not what the platforms agree on, but where they differ.\n\n\n\n\n\n\n\n\nPlatform\nMost distinctive skill\nLikely reason\n\n\n\n\nWe Work Remotely\nReact (40% of postings)\nCurated board attracts design-forward companies\n\n\nRemoteOK\nGo / sys admin(30% of postings)\nUser base of infrastructure engineers\n\n\nHacker News\nPython (28% of postings)\nStartup-heavy community, full-stack roles"
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#what-this-means-if-youre-learning",
-    "href": "blog/posts/WEEK2.html#what-this-means-if-youre-learning",
-    "title": "Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "What This Means If You’re Learning",
-    "text": "What This Means If You’re Learning\nIf you are preparing for a career in tech — or planning what to study next — the data suggests a clear priority order:\n1. Learn Python first. It is the only language that appears near the top of every platform. It works for backend engineering, data analysis, automation, and increasingly for AI.\n2. Add React. Frontend skills are not optional. Even backend-leaning roles increasingly expect familiarity with a modern JavaScript framework.\n3. Build cloud and DevOps literacy. AWS, Docker, and CI/CD appear together so often that they are effectively a single requirement. You do not need to be a specialist, but you do need to be comfortable.\n4. Learn one database well. PostgreSQL is the safest choice, but MongoDB is also common. The specific choice matters less than having real experience with schema design and queries."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#what-this-analysis-cannot-tell-you",
-    "href": "blog/posts/WEEK2.html#what-this-analysis-cannot-tell-you",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "What This Analysis Cannot Tell You",
-    "text": "What This Analysis Cannot Tell You\nA few honest limitations:\n\nIt is a snapshot. The data was collected in September 2026 and reflects one moment in a fast-moving market.\nJob postings are not hires. Employers list many skills they never actually test for. Advertised demand is a rough proxy for real demand.\nKeyword counting is imprecise. A posting that mentions “Python” once counts the same as one that mentions it ten times.\n\nThese limitations do not undermine the findings — the patterns are strong enough to be meaningful — but they are worth keeping in mind.\n\nData sources: RemoteOK, We Work Remotely, and Hacker News. All scraping was done ethically using public RSS feeds, APIs, and HTML pages."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#conclusion",
-    "href": "blog/posts/WEEK2.html#conclusion",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "Conclusion",
-    "text": "Conclusion\nAcross three independent sources and 369 job postings, the data does not point to a single “most in-demand” skill. Instead, it shows a segmented market:\n\nHacker News (startup / full-stack): Python leads at 28%, followed by TypeScript and React.\nWe Work Remotely (product-oriented remote companies): React leads at 40%, with AWS and CI/CD close behind.\nRemoteOK (infrastructure / DevOps): Go and system administration dominate.\n\nThe only skills that appear near the top on more than one platform are Python and React. Cloud and DevOps tools (AWS, Docker, CI/CD) recur across platforms but never as the single top skill.\nFor someone unsure which segment to target, a low-regret starting point would be Python and React first, then cloud/DevOps literacy.\nThe broader lesson is methodological: “What skills are in demand?” is not a well-defined question until you specify the market. Different platforms serve different employers, and the skills that matter depend on which segment you are targeting."
+    "text": "Limitations\n\nACS estimates are uncertain. Each tract’s median income has a margin of error, sometimes large. Small differences between adjacent tracts may not be statistically meaningful.\nMedian income is a crude measure. It says nothing about wealth, cost of living, or household size. A tract with many retirees may have a low median income but high wealth.\n2022 snapshot. The data reflect one year. Income geography changes slowly, but the picture would differ in other years.\nTract boundaries can change. Comparisons across years require attention to boundary changes.\nSpatial patterns are not causal. The maps show where income is concentrated, not why. Explanations require additional data and analysis.\n\n\nData source: U.S. Census Bureau, American Community Survey 5-year estimates (2022), table B19013. Retrieved via the tidycensus R package. Full code and data are available in the project repository."
   },
   {
     "objectID": "blog/posts/WEEK3.html",
@@ -308,11 +112,11 @@
     "text": "Finding 3: A Persistent and Growing Gender Gap in Returns\n\n\n\nThe College Premium by Gender, 2002–2025\n\n\nThe final dimension I examined is gender, and here the pattern is the most striking of all.\nWomen’s college premium has been higher than men’s for almost the entire period, and the gap has widened over time. What should be noticed is that a higher premium does not mean that the absolute wage of women with degrees is more than that of men with degrees. It simply means the gap between degree holders and non-degree holders is larger for women.\nIn 2002, the premium was 72.5% for women and 66.7% for men — a 6-point difference. By 2025, the gap had grown to more than 10 points: 85.7% for women, 75.0% for men.\nThe paths are also different:\n\nWomen’s premium rose steadily from 72.5% in 2002 to 85.7% in 2025 — the most consistent upward trend in the entire analysis.\nMen’s premium was far more volatile. It started at 66.7%, briefly fell to 64.8% in 2007, then surged to 80.5% by 2015 — briefly overtaking women — before falling back to 75% by 2025.\n\nThe pattern is consistent with two well-documented trends in the U.S. labor market:\n\nWomen have been outpacing men in educational attainment for decades. As more women earn college degrees, the composition of the female college workforce changes, which affects measured earnings.\nMale high school graduates have seen their earnings decline, particularly in manufacturing and other traditionally male-dominated industries. Female high school graduates’ earnings have been more stable (though also low, around $24,000 for most of the period).\n\nTogether, these trends mean that the college premium has become a larger advantage for women than for men — not necessarily because women’s college earnings are increasing, but because men’s alternatives have gotten worse. This partly reflects the declining fortunes of male workers without a degree."
   },
   {
-    "objectID": "blog/posts/WEEK3.html#what-this-means",
-    "href": "blog/posts/WEEK3.html#what-this-means",
-    "title": "Who Benefits Most from a College Degree?",
-    "section": "What This Means",
-    "text": "What This Means\nFor students deciding whether to attend college, the data suggests the answer is still clearly yes: the financial return is large, stable, and durable.\nBut for policymakers, the picture is more complicated:\n\nThe premium is not growing steadily the way it did in the 1980s and 1990s. The post-2015 plateau is real.\nOld workers face more volatility than younger generation.\nThe gender gap in returns has widened. Women’s premium rose steadily while men’s fluctuated and ended lower than where it started. This reflects the declining fortunes of male high school graduates more than it reflects gains for female college graduates.\n\nThe college premium is not a policy lever. It is a measurement of how much the labor market values a degree. Right now, that value is high — but its trajectory, and who benefits from it most, is not uniform."
+    "objectID": "blog/posts/WEEK3.html#conclusion",
+    "href": "blog/posts/WEEK3.html#conclusion",
+    "title": "Blog3: Who Benefits Most from a College Degree?",
+    "section": "Conclusion",
+    "text": "Conclusion\nThe college wage premium remains one of the most important features of the U.S. labor market. This analysis shows it is large (around 70%) and experienced very differently across groups:\n\nThe premium is not growing steadily. Since 2015, it fell through 2022 and partially recovered by 2025. The V-shape suggests it responds to labor market shocks, not to a steady increase in the value of a degree.\nOlder workers without a degree face the most volatility. The 55–64 group saw high school earnings swing by $4,000 over two decades, while bachelor’s earnings barely moved. The premium moves because the alternative moves.\nThe gender gap in the college premium has widened. Women’s premium rose steadily to 85.7% by 2025, while men’s was more volatile and reached 75.0%. A higher premium for women does not mean higher absolute wages — it means the gap between degree and non-degree workers is larger for women.\n\nWhat should a reader take away from this? The college premium is not just a measure of what a degree is worth. It is a measure of the gap between two paths — and that gap depends as much on what happens to workers without a degree as it does on what happens to workers with one. When the premium rises, it may be because college became more valuable — or because the alternative became worse. Both have happened in the U.S. over the past two decades, and both are visible in this data."
   },
   {
     "objectID": "blog/posts/WEEK3.html#limitations",
@@ -322,67 +126,11 @@
     "text": "Limitations\nThis analysis has several limitations:\n\nDescriptive, not causal. The premium measures the correlation between education and earnings. It does not prove that college causes higher earnings, since college graduates differ from non-graduates in many ways.\nMedian-based. The premium measures the middle of the distribution, not the full range.\nBinary comparison. Only high school and bachelor’s degree holders are compared. Associate’s and graduate degrees are excluded.\nSelected years. The analysis uses 7 ASEC years, not every year from 2002–2025.\n\n\nData source: IPUMS CPS, Annual Social and Economic Supplement, 2002–2025. All statistics are weighted using ASECWT. Earnings are adjusted to 2010 dollars using CPI-U. Full code and data are available in the project repository."
   },
   {
-    "objectID": "blog/posts/WEEK3.html#conclusion",
-    "href": "blog/posts/WEEK3.html#conclusion",
-    "title": "Blog3: Who Benefits Most from a College Degree?",
-    "section": "Conclusion",
-    "text": "Conclusion\nThe college wage premium remains one of the most important features of the U.S. labor market. This analysis shows it is large (around 70%) and experienced very differently across groups:\n\nThe premium is not growing steadily. Since 2015, it fell through 2022 and partially recovered by 2025. The V-shape suggests it responds to labor market shocks, not to a steady increase in the value of a degree.\nOlder workers without a degree face the most volatility. The 55–64 group saw high school earnings swing by $4,000 over two decades, while bachelor’s earnings barely moved. The premium moves because the alternative moves.\nThe gender gap in the college premium has widened. Women’s premium rose steadily to 85.7% by 2025, while men’s was more volatile and reached 75.0%. A higher premium for women does not mean higher absolute wages — it means the gap between degree and non-degree workers is larger for women.\n\nWhat should a reader take away from this? The college premium is not just a measure of what a degree is worth. It is a measure of the gap between two paths — and that gap depends as much on what happens to workers without a degree as it does on what happens to workers with one. When the premium rises, it may be because college became more valuable — or because the alternative became worse. Both have happened in the U.S. over the past two decades, and both are visible in this data."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#introduction",
-    "href": "blog/posts/WEEK4.html#introduction",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "objectID": "blog/posts/WEEK1.html",
+    "href": "blog/posts/WEEK1.html",
+    "title": "Blog1: Omitted Variable Bias — Why ‘Significant’ Isn’t Enough",
     "section": "",
-    "text": "Every year, hundreds of thousands of Americans move between states. They leave the Northeast and Midwest for the Sun Belt, chasing lower taxes, cheaper housing, and new job opportunities. Meanwhile, there are also immigrants from foreign countries entering different states. Their choice also includes consideration to their new life condition. Between 2000 and 2025, Nevada’s population grew by 63%, Utah’s by 58%, and Texas’s by 51%. Meanwhile, West Virginia lost population, and Illinois barely grew at all.\nThis migration is not just a demographic fact. It is often treated as a signal of economic success. States that attract new residents are said to be “winning” — they have jobs, opportunities, and a future. States that lose residents are said to be “declining.”\nBut is that true? Does population growth actually mean that the people living in a state are becoming richer? Or are migrants moving to places that are cheaper — not necessarily more prosperous?\nThis analysis uses data from the Federal Reserve Economic Data (FRED) system to examine population and income trends across all 50 U.S. states (plus D.C.) from 2000 to 2025. The data is retrieved programmatically through the fredr R package, so the entire analysis is reproducible.\nThe answer, it turns out, is more nuanced than the headline numbers suggest. Population growth and income growth are two different things — and confusing them can lead to the wrong conclusions about which states are doing well."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#how-to-measure",
-    "href": "blog/posts/WEEK4.html#how-to-measure",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "How to measure",
-    "text": "How to measure\nI used two annual series for each state:\n\nPopulation ({state}POP) — resident population in thousands\nPer capita personal income ({state}PCPI) — total personal income divided by population, in current dollars\n\nUsing per capita income is essential when comparing states of different sizes.\nAll figures are in current (nominal) dollars. Real growth after inflation would be lower; this is discussed in the Limitations.\nI collected data for all 51 jurisdictions (50 states plus the District of Columbia) from 2000 through 2025 — about 2,652 observations in total."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
-    "href": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "Finding 1: Growth Is Concentrated in the West and South",
-    "text": "Finding 1: Growth Is Concentrated in the West and South\n\n\n\nTop states by population growth\n\n\nThe fastest-growing states are all in the West and South: Nevada (+63%), Utah (+58%), Idaho (+56%), Texas (+51%), Arizona (+48%), and Florida (+46%).\n\n\n\nBottom states by population growth\n\n\nThe slowest-growing states are all in the Midwest and Northeast: West Virginia (-2.3%), Michigan (+1.8%), Illinois (+2.3%), Louisiana (+3.3%), and Mississippi (+3.7%).\nWest Virginia is the only state that lost population over the period. This is consistent with long-running trend of out-migration of young workers, declining coal employment, and an aging population in that area."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
-    "href": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "Finding 2: Population Growth Does Not Mean Income Growth",
-    "text": "Finding 2: Population Growth Does Not Mean Income Growth\n\n\n\nPopulation growth vs. income growth\n\n\nIf population growth were a sign of economic success, we would expect the fastest-growing states to also show the fastest income growth. However, the data shows no such relationship. According to the scatter plot, it shows only a weak, noisy-positive relationship.\nFor example: Nevada has a population growth of 63%, which is the highest in the country, but has a nominal income growth of only 135%. Meanwhile, Utah has a similar population growth of 58%, but Utah’s nominal per capita income grew roughly 190% versus Nevada’s 135%. In this case, the relationship between income and population growth is relatively week."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#finding-3-slow-growing-states-have-bigger-internal-gaps",
-    "href": "blog/posts/WEEK4.html#finding-3-slow-growing-states-have-bigger-internal-gaps",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "Finding 3: Slow-Growing States Have Bigger Internal Gaps",
-    "text": "Finding 3: Slow-Growing States Have Bigger Internal Gaps\n\n\n\nIncome trajectories by growth group\n\n\nThe final piece of the puzzle comes from looking at income levels, not growth rates.\nAmong population-fast-growing states, per capita income is relatively tight: all six states end the period between $65,000 and $77,000.\nAmong population-slow-growing states, the range is much wider: Illinois reaches nearly $80,000 by 2025, while Mississippi remains near $55,000.\nIn this case, Population growth is not a signal of prosperity, but population stagnation is not a signal of decline either. Illinois has one of the highest per capita incomes in the country while the resident number there is basically stable."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#conclusion",
-    "href": "blog/posts/WEEK4.html#conclusion",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "Conclusion",
-    "text": "Conclusion\nThis analysis leads to three takeaways:\n\nPopulation growth is not a reliable indicator of income growth. Nevada and Utah both grew quickly, but their income growth was very different. Meanwhile, Illinois’s population remained flat while its per capita income grew steadily.\nIncome growth is not driven by the net change in population. The two variables are only weakly correlated. The people who leave a state and the people who arrive are different in income, skills, and consumption behavior. As a result, income is affected by who is in the population, not just how many people there are.\nThe composition of migration matters more than the headline number. A state can grow quickly and remain poor, or stagnate and remain rich. The interesting question is not “how many people moved in?” but “who moved in, and who moved out?”\n\nWhat should a reader take away from this? If you are deciding where to live, do not assume that population fast-growing states are richer or that population slow-growing states are declining. The two are only loosely connected. Population change is a useful signal, but it is not the same as economic prosperity."
-  },
-  {
-    "objectID": "blog/posts/WEEK4.html#limitations",
-    "href": "blog/posts/WEEK4.html#limitations",
-    "title": "Blog4: Does Population Growth Bring Prosperity?",
-    "section": "Limitations",
-    "text": "Limitations\nThis analysis has several limitations:\n\nPer capita income is a crude measure. It divides total income by total population, including children and retirees who do not earn income.\nNo inflation and cost-of-living adjustment. The analysis use nominal income data so the growth rates reported here include both real income growth and price inflation. Meanwhile, a dollar in Mississippi buys more than a dollar in California, but this analysis treats them as equal.\nPopulation estimates, not census counts. FRED uses annual estimates between decennial censuses, which can diverge from actual counts.\nSimple correlation. The analysis describes patterns, not causes. It does not explain why some states grow and others do not.\nPopulation growth combines natural increase and net migration. This analysis cannot separate the two, so statements about migration specifically are not supported.\n\n\nData source: FRED, Federal Reserve Bank of St. Louis. State population ({state}POP) and per capita personal income ({state}PCPI), 2000–2025. All data retrieved programmatically through the fredr R package. Full code is available in the project repository."
-  },
-  {
-    "objectID": "blog/posts/WEEK2.html#the-skills-that-keep-appearing-in-traditional-tech-postings-are-not-dominating-the-remote-labor-market",
-    "href": "blog/posts/WEEK2.html#the-skills-that-keep-appearing-in-traditional-tech-postings-are-not-dominating-the-remote-labor-market",
-    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
-    "section": "The Skills That Keep Appearing in traditional tech-postings are not dominating the remote labor market",
-    "text": "The Skills That Keep Appearing in traditional tech-postings are not dominating the remote labor market\nFrom the data, though three platforms are focusing on similar industries, the required abilities are quite different. For traditional Hacker News, Python dominates the postings.It appears in 69 of the 245 postings (28%). However, the requirement numbers for Python is other two remote platform are much lower. Especially for RemoteOK, there are only 8 postings mentioned Python in their postings.\n\nWe Work Remotely: 25 Remote Tech Postings\n\n\n\nSkills in demand on We Work Remotely\n\n\nReact leads the pack, appearing in 40% of postings, followed closely by AWS and CI/CD. The pattern here points to a cloud-native, frontend-heavy skill set — exactly what you would expect from a remote-only job board. Then Docker and Python are also been noticed by several postings.\n\n\nRemoteOK: 99 Remote-First Postings\n\n\n\nSkills in demand on RemoteOK\n\n\nRemoteOK’s tag data tells a different story. Go and system administration dominate, reflecting a user base of infrastructure engineers and DevOps specialists. Backend skills are more prominent here than on the other platforms.\n\n\nHacker News: 245 Global Tech Postings\n\n\n\nSkills in demand on Hacker News\n\n\nThe Hacker News sample is the largest and most diverse. Python leads with 69 mentions (28%), followed by TypeScript and React. This is the startup-heavy, full-stack profile — engineers who are expected to work across the entire product."
+    "text": "Ice cream sales and drowning deaths rise together every summer. Run a simple regression of drownings on ice cream sales, and the coefficient comes out “statistically significant.” Someone could argue from that coefficient that ice cream causes drowning.\nBut the two are not causing each other. They are both driven by a third variable: hot weather. Hot days send people to the beach and to the ice cream truck at the same time. When that third variable is missing from the regression, the coefficient on ice cream quietly picks up weather’s effect.\nThis is omitted variable bias (OVB). It is one of the most common mistakes in applied economics, and it is dangerous because it does not announce itself. The coefficient looks significant, the t-statistic is large, and the model fits the data — but the estimate is wrong.\nThis post has two goals. First, to explain OVB clearly with a simulated example. Second, to show that the same bias appears in real data — using a large microdata sample from the IPUMS Current Population Survey. The question is simple: when we control for a variable that belongs in the model, how much does the estimated effect change?"
   },
   {
     "objectID": "blog/posts/WEEK1.html#introduction",
@@ -427,6 +175,111 @@
     "text": "Limitations\n\nThis is a demonstration, not a causal estimate. The education regression illustrates OVB mechanics; it is not a credible estimate of the return to college. Credible estimates require panel data and careful identification.\nWeeks worked is only one omitted variable. Education is correlated with many other factors (family background, ability, location, industry). Adding weeks worked reduces the bias but does not eliminate it.\nThe simulated example uses one random seed. The numbers shown are specific to that seed, though the qualitative pattern is stable across seeds.\nCPS income data are topcoded. Very high earners are replaced with top values, which compresses the upper tail and can affect regression coefficients.\n\n\nData source: IPUMS CPS, Annual Social and Economic Supplement, 2002–2025. All statistics are weighted using ASECWT. Earnings are adjusted to 2010 dollars using CPI-U. Full code is available in the project repository."
   },
   {
+    "objectID": "blog/posts/post1/Untitled.html",
+    "href": "blog/posts/post1/Untitled.html",
+    "title": "My First Blog Post",
+    "section": "",
+    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
+  },
+  {
+    "objectID": "bio.html",
+    "href": "bio.html",
+    "title": "About Me",
+    "section": "",
+    "text": "I am currently a Master’s student in Applied Economics and Data Science at the University of Pennsylvania, expected to graduate in 2027. Prior to this, I completed my Bachelor’s degree in Economics and Finance at The University of Hong Kong, where I graduated with a cumulative GPA of 3.99/4.3.\nI am passionate about leveraging data-driven approaches to solve complex economic and financial problems. My academic and professional experiences have equipped me with strong quantitative skills and a deep interest in applying computational methods to real-world business challenges."
+  },
+  {
+    "objectID": "bio.html#education",
+    "href": "bio.html#education",
+    "title": "About Me",
+    "section": "Education",
+    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Bachelor of Economics and Finance, Minor in Statistics, The University of Hong Kong, 2026"
+  },
+  {
+    "objectID": "bio.html#interests",
+    "href": "bio.html#interests",
+    "title": "About Me",
+    "section": "Interests",
+    "text": "Interests\n\nInequality\nSurvey method\nData Analysis"
+  },
+  {
+    "objectID": "bio.html#contact",
+    "href": "bio.html#contact",
+    "title": "About Me",
+    "section": "Contact",
+    "text": "Contact"
+  },
+  {
+    "objectID": "bio.html#yuzhuocsas.upenn.edu",
+    "href": "bio.html#yuzhuocsas.upenn.edu",
+    "title": "About Me",
+    "section": "yuzhuoc@sas.upenn.edu",
+    "text": "yuzhuoc@sas.upenn.edu"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Blog5: The Geography of Income in Pennsylvania\n\n\n\n\n\n\n\n\nOct 7, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nBlog1: Omitted Variable Bias — Why ‘Significant’ Isn’t Enough\n\n\n\n\n\n\n\n\nOct 5, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nBlog4: Does Population Growth Bring Prosperity?\n\n\n\n\n\n\n\n\nSep 29, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nBlog3: Who Benefits Most from a College Degree?\n\n\n\n\n\n\n\n\nSep 22, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nBlog2: Which Technical Skills Are Most In Demand in Tech Hiring?\n\n\n\n\n\n\n\n\nSep 16, 2026\n\n\nYuzhuo Cui\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html",
+    "href": "blog/posts/WEEK2.html",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "",
+    "text": "Anyone trying to break into tech today faces the same question: what should I learn first? The answer is not obvious. There are hundreds of programming languages, frameworks, and tools, and the ones that employers ask for change from year to year. A skill that was essential five years ago may now be optional, and a tool that barely existed a decade ago may now appear in a quarter of all job postings.\nThis matters beyond individual career decisions. Employers use job postings to signal what they value. When those signals change, they reveal something about how the tech industry is evolving — which roles are growing, which technologies are becoming standard, and which parts of the market are pulling in different directions.\nThis analysis scrapes job postings from three independent sources to answer the question:\nWhich technical skills appear most frequently in tech job postings — and do different hiring markets demand different skills?\nThe answer turns out to be more complicated and depending on the market. The skills that dominate one platform are not the same skills that dominate another. That finding is the core of this post."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#introduction",
+    "href": "blog/posts/WEEK2.html#introduction",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "",
+    "text": "Anyone trying to break into tech today faces the same question: what should I learn first? The answer is not obvious. There are hundreds of programming languages, frameworks, and tools, and the ones that employers ask for change from year to year. A skill that was essential five years ago may now be optional, and a tool that barely existed a decade ago may now appear in a quarter of all job postings.\nThis matters beyond individual career decisions. Employers use job postings to signal what they value. When those signals change, they reveal something about how the tech industry is evolving — which roles are growing, which technologies are becoming standard, and which parts of the market are pulling in different directions.\nThis analysis scrapes job postings from three independent sources to answer the question:\nWhich technical skills appear most frequently in tech job postings — and do different hiring markets demand different skills?\nThe answer turns out to be more complicated and depending on the market. The skills that dominate one platform are not the same skills that dominate another. That finding is the core of this post."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#where-the-data-comes-from",
+    "href": "blog/posts/WEEK2.html#where-the-data-comes-from",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "Where the Data Comes From",
+    "text": "Where the Data Comes From\nI collected job postings from three different platforms, each representing a different slice of the tech hiring market:\n\n\n\n\n\n\n\n\nSource\nWhat it covers\nPostings\n\n\n\n\nRemoteOK\nA curated remote-first job board with structured skill tags\n99\n\n\nWe Work Remotely\nA remote-only job board with detailed descriptions\n25\n\n\nHacker News “Who is Hiring?”\nGlobal startup and tech hiring, updated monthly\n245\n\n\n\nTogether these sources cover a certain amount of employers and postings, such as tech companies including startups and traditional companies that hiring across onsite, hybrid, and remote arrangements.\nEach platform attracts a different kind of employer, so combining them reduces the risk of drawing conclusions from a single, biased sample."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#the-skills-that-keep-appearing-in-traditional-tech-postings-are-not-dominating-the-remote-labor-market",
+    "href": "blog/posts/WEEK2.html#the-skills-that-keep-appearing-in-traditional-tech-postings-are-not-dominating-the-remote-labor-market",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "The Skills That Keep Appearing in traditional tech-postings are not dominating the remote labor market",
+    "text": "The Skills That Keep Appearing in traditional tech-postings are not dominating the remote labor market\nFrom the data, though three platforms are focusing on similar industries, the required abilities are quite different. For traditional Hacker News, Python dominates the postings.It appears in 69 of the 245 postings (28%). However, the requirement numbers for Python is other two remote platform are much lower. Especially for RemoteOK, there are only 8 postings mentioned Python in their postings.\n\nWe Work Remotely: 25 Remote Tech Postings\n\n\n\nSkills in demand on We Work Remotely\n\n\nReact leads the pack, appearing in 40% of postings, followed closely by AWS and CI/CD. The pattern here points to a cloud-native, frontend-heavy skill set — exactly what you would expect from a remote-only job board. Then Docker and Python are also been noticed by several postings.\n\n\nRemoteOK: 99 Remote-First Postings\n\n\n\nSkills in demand on RemoteOK\n\n\nRemoteOK’s tag data tells a different story. Go and system administration dominate, reflecting a user base of infrastructure engineers and DevOps specialists. Backend skills are more prominent here than on the other platforms.\n\n\nHacker News: 245 Global Tech Postings\n\n\n\nSkills in demand on Hacker News\n\n\nThe Hacker News sample is the largest and most diverse. Python leads with 69 mentions (28%), followed by TypeScript and React. This is the startup-heavy, full-stack profile — engineers who are expected to work across the entire product."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#how-the-three-platforms-compare",
+    "href": "blog/posts/WEEK2.html#how-the-three-platforms-compare",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "How the Three Platforms Compare",
+    "text": "How the Three Platforms Compare\nThe most interesting finding is not what the platforms agree on, but where they differ.\n\n\n\n\n\n\n\n\nPlatform\nMost distinctive skill\nLikely reason\n\n\n\n\nWe Work Remotely\nReact (40% of postings)\nCurated board attracts design-forward companies\n\n\nRemoteOK\nGo / sys admin(30% of postings)\nUser base of infrastructure engineers\n\n\nHacker News\nPython (28% of postings)\nStartup-heavy community, full-stack roles"
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#conclusion",
+    "href": "blog/posts/WEEK2.html#conclusion",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "Conclusion",
+    "text": "Conclusion\nAcross three independent sources and 369 job postings, the data does not point to a single “most in-demand” skill. Instead, it shows a segmented market:\n\nHacker News (startup / full-stack): Python leads at 28%, followed by TypeScript and React.\nWe Work Remotely (product-oriented remote companies): React leads at 40%, with AWS and CI/CD close behind.\nRemoteOK (infrastructure / DevOps): Go and system administration dominate.\n\nThe only skills that appear near the top on more than one platform are Python and React. Cloud and DevOps tools (AWS, Docker, CI/CD) recur across platforms but never as the single top skill.\nFor someone unsure which segment to target, a low-regret starting point would be Python and React first, then cloud/DevOps literacy.\nThe broader lesson is methodological. “What skills are in demand?” sounds like a simple question, but it is not well-defined until you specify the market. Different platforms serve different employers, and the skills that matter depend on which segment you are targeting. A job seeker who looks at only one platform may draw the wrong conclusion about what to learn — and a researcher who looks at only one platform may draw the wrong conclusion about what the tech industry values."
+  },
+  {
+    "objectID": "blog/posts/WEEK2.html#what-this-analysis-cannot-tell-you",
+    "href": "blog/posts/WEEK2.html#what-this-analysis-cannot-tell-you",
+    "title": "Blog2: Which Technical Skills Are Most In Demand in Tech Hiring?",
+    "section": "What This Analysis Cannot Tell You",
+    "text": "What This Analysis Cannot Tell You\nA few honest limitations:\n\nIt is a snapshot. The data was collected in September 2026 and reflects one moment in a fast-moving market.\nJob postings are not hires. Employers list many skills they never actually test for. Advertised demand is a rough proxy for real demand.\nKeyword counting is imprecise. A posting that mentions “Python” once counts the same as one that mentions it ten times.\n\nThese limitations do not undermine the findings — the patterns are strong enough to be meaningful — but they are worth keeping in mind.\n\nData sources: RemoteOK, We Work Remotely, and Hacker News. All scraping was done ethically using public RSS feeds, APIs, and HTML pages."
+  },
+  {
     "objectID": "blog/posts/WEEK4.html",
     "href": "blog/posts/WEEK4.html",
     "title": "Blog4: Does Population Growth Bring Prosperity?",
@@ -434,10 +287,59 @@
     "text": "Every year, hundreds of thousands of Americans move between states. They leave the Northeast and Midwest for the Sun Belt, chasing lower taxes, cheaper housing, and new job opportunities. Meanwhile, there are also immigrants from foreign countries entering different states. Their choice also includes consideration to their new life condition. Between 2000 and 2025, Nevada’s population grew by 63%, Utah’s by 58%, and Texas’s by 51%. Meanwhile, West Virginia lost population, and Illinois barely grew at all.\nThis migration is not just a demographic fact. It is often treated as a signal of economic success. States that attract new residents are said to be “winning” — they have jobs, opportunities, and a future. States that lose residents are said to be “declining.”\nBut is that true? Does population growth actually mean that the people living in a state are becoming richer? Or are migrants moving to places that are cheaper — not necessarily more prosperous?\nThis analysis uses data from the Federal Reserve Economic Data (FRED) system to examine population and income trends across all 50 U.S. states (plus D.C.) from 2000 to 2025. The data is retrieved programmatically through the fredr R package, so the entire analysis is reproducible.\nThe answer, it turns out, is more nuanced than the headline numbers suggest. Population growth and income growth are two different things — and confusing them can lead to the wrong conclusions about which states are doing well."
   },
   {
+    "objectID": "blog/posts/WEEK4.html#introduction",
+    "href": "blog/posts/WEEK4.html#introduction",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "",
+    "text": "Every year, hundreds of thousands of Americans move between states. They leave the Northeast and Midwest for the Sun Belt, chasing lower taxes, cheaper housing, and new job opportunities. Meanwhile, there are also immigrants from foreign countries entering different states. Their choice also includes consideration to their new life condition. Between 2000 and 2025, Nevada’s population grew by 63%, Utah’s by 58%, and Texas’s by 51%. Meanwhile, West Virginia lost population, and Illinois barely grew at all.\nThis migration is not just a demographic fact. It is often treated as a signal of economic success. States that attract new residents are said to be “winning” — they have jobs, opportunities, and a future. States that lose residents are said to be “declining.”\nBut is that true? Does population growth actually mean that the people living in a state are becoming richer? Or are migrants moving to places that are cheaper — not necessarily more prosperous?\nThis analysis uses data from the Federal Reserve Economic Data (FRED) system to examine population and income trends across all 50 U.S. states (plus D.C.) from 2000 to 2025. The data is retrieved programmatically through the fredr R package, so the entire analysis is reproducible.\nThe answer, it turns out, is more nuanced than the headline numbers suggest. Population growth and income growth are two different things — and confusing them can lead to the wrong conclusions about which states are doing well."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#how-to-measure",
+    "href": "blog/posts/WEEK4.html#how-to-measure",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "How to measure",
+    "text": "How to measure\nI used two annual series for each state:\n\nPopulation ({state}POP) — resident population in thousands\nPer capita personal income ({state}PCPI) — total personal income divided by population, in current dollars\n\nUsing per capita income is essential when comparing states of different sizes.\nAll figures are in current (nominal) dollars. Real growth after inflation would be lower; this is discussed in the Limitations.\nI collected data for all 51 jurisdictions (50 states plus the District of Columbia) from 2000 through 2025 — about 2,652 observations in total."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
+    "href": "blog/posts/WEEK4.html#finding-1-growth-is-concentrated-in-the-west-and-south",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Finding 1: Growth Is Concentrated in the West and South",
+    "text": "Finding 1: Growth Is Concentrated in the West and South\n\n\n\nTop states by population growth\n\n\nThe fastest-growing states are all in the West and South: Nevada (+63%), Utah (+58%), Idaho (+56%), Texas (+51%), Arizona (+48%), and Florida (+46%).\n\n\n\nBottom states by population growth\n\n\nThe slowest-growing states are all in the Midwest and Northeast: West Virginia (-2.3%), Michigan (+1.8%), Illinois (+2.3%), Louisiana (+3.3%), and Mississippi (+3.7%).\nWest Virginia is the only state that lost population over the period. This is consistent with long-running trend of out-migration of young workers, declining coal employment, and an aging population in that area."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
+    "href": "blog/posts/WEEK4.html#finding-2-population-growth-does-not-mean-income-growth",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Finding 2: Population Growth Does Not Mean Income Growth",
+    "text": "Finding 2: Population Growth Does Not Mean Income Growth\n\n\n\nPopulation growth vs. income growth\n\n\nIf population growth were a sign of economic success, we would expect the fastest-growing states to also show the fastest income growth. However, the data shows no such relationship. According to the scatter plot, it shows only a weak, noisy-positive relationship.\nFor example: Nevada has a population growth of 63%, which is the highest in the country, but has a nominal income growth of only 135%. Meanwhile, Utah has a similar population growth of 58%, but Utah’s nominal per capita income grew roughly 190% versus Nevada’s 135%. In this case, the relationship between income and population growth is relatively week."
+  },
+  {
     "objectID": "blog/posts/WEEK4.html#finding-3-income-growth-differ-more-among-slow-growing-states",
     "href": "blog/posts/WEEK4.html#finding-3-income-growth-differ-more-among-slow-growing-states",
     "title": "Blog4: Does Population Growth Bring Prosperity?",
     "section": "Finding 3: Income Growth Differ More Among Slow-Growing States",
     "text": "Finding 3: Income Growth Differ More Among Slow-Growing States\n\n\n\nIncome trajectories by growth group\n\n\nThen, we collected the income growth data for the six fastest-growing states and the six slowest-growing states in terms of population growth.\nAmong population-fast-growing states, per capita income range is relatively narrow: all six states end the period between $65,000 and $77,000.\nAmong population-slow-growing states, the range is much wider: Illinois reaches nearly $80,000 by 2025, while Mississippi remains near $55,000.\nIn this case, Population growth is not a signal of prosperity, but population stagnation is not a signal of decline either. Illinois has one of the highest per capita incomes in the country while its population has remained roughly flat.The reason is that both population inflow and outflow exist in each state. If a state is attracting high-skilled immigrants while those leaving the state were the middle and low-income locals, the income per capita for the state would increase while population would remain stable."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#conclusion",
+    "href": "blog/posts/WEEK4.html#conclusion",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Conclusion",
+    "text": "Conclusion\nThis analysis leads to three takeaways:\n\nPopulation growth is not a reliable indicator of income growth. Nevada and Utah both grew quickly, but their income growth was very different. Meanwhile, Illinois’s population remained flat while its per capita income grew steadily.\nIncome growth is not driven by the net change in population. The two variables are only weakly correlated. The people who leave a state and the people who arrive are different in income, skills, and consumption behavior. As a result, income is affected by who is in the population, not just how many people there are.\nThe composition of migration matters more than the headline number. A state can grow quickly and remain poor, or stagnate and remain rich. The interesting question is not “how many people moved in?” but “who moved in, and who moved out?”\n\nWhat should a reader take away from this? If you are deciding where to live, do not assume that population fast-growing states are richer or that population slow-growing states are declining. The two are only loosely connected. Population change is a useful signal, but it is not the same as economic prosperity."
+  },
+  {
+    "objectID": "blog/posts/WEEK4.html#limitations",
+    "href": "blog/posts/WEEK4.html#limitations",
+    "title": "Blog4: Does Population Growth Bring Prosperity?",
+    "section": "Limitations",
+    "text": "Limitations\nThis analysis has several limitations:\n\nPer capita income is a crude measure. It divides total income by total population, including children and retirees who do not earn income.\nNo inflation and cost-of-living adjustment. The analysis use nominal income data so the growth rates reported here include both real income growth and price inflation. Meanwhile, a dollar in Mississippi buys more than a dollar in California, but this analysis treats them as equal.\nPopulation estimates, not census counts. FRED uses annual estimates between decennial censuses, which can diverge from actual counts.\nSimple correlation. The analysis describes patterns, not causes. It does not explain why some states grow and others do not.\nPopulation growth combines natural increase and net migration. This analysis cannot separate the two, so statements about migration specifically are not supported.\n\n\nData source: FRED, Federal Reserve Bank of St. Louis. State population ({state}POP) and per capita personal income ({state}PCPI), 2000–2025. All data retrieved programmatically through the fredr R package. Full code is available in the project repository."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Yuzhuo Cui",
+    "section": "",
+    "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
   }
 ]
