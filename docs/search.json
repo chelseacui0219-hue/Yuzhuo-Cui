@@ -341,5 +341,187 @@
     "title": "Yuzhuo Cui",
     "section": "",
     "text": "Yuzhuo Cui\nUniversity of Pennsylvania\nWelcome to my personal website.\n\nQuick Links"
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html",
+    "href": "blog/posts/WEEK6.html",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "",
+    "text": "How much of our economic success is determined by our parents? Economists measure this using the Intergenerational Elasticity (IGE) — a metric that captures how a percentage change in parents’ income affects their children’s income.\nEstimating this requires matching parents to their children across time. In longitudinal datasets like the Panel Study of Income Dynamics (PSID), this is a complex data engineering task. You cannot simply look at a single row; you have to track individuals across decades and link families together using unique identifiers.\nIn this tutorial, I will demonstrate how to use SQL within Python to construct this parent-child match. We will use a real dataset from the PSID, which has been pre-matched using the Family Identification Mapping System (FIMS).\nBy the end of this tutorial, you will know how to: 1. Load a longitudinal dataset into a SQL database using Python. 2. Use SELECT and JOIN to match parents and children using individual IDs. 3. Use GROUP BY to compare income across subgroups. 4. Estimate the IGE and understand why averaging income over multiple years avoids the life-cycle bias."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#introduction",
+    "href": "blog/posts/WEEK6.html#introduction",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "",
+    "text": "How much of our economic success is determined by our parents? Economists measure this using the Intergenerational Elasticity (IGE) — a metric that captures how a percentage change in parents’ income affects their children’s income.\nEstimating this requires matching parents to their children across time. In longitudinal datasets like the Panel Study of Income Dynamics (PSID), this is a complex data engineering task. You cannot simply look at a single row; you have to track individuals across decades and link families together using unique identifiers.\nIn this tutorial, I will demonstrate how to use SQL within Python to construct this parent-child match. We will use a real dataset from the PSID, which has been pre-matched using the Family Identification Mapping System (FIMS).\nBy the end of this tutorial, you will know how to: 1. Load a longitudinal dataset into a SQL database using Python. 2. Use SELECT and JOIN to match parents and children using individual IDs. 3. Use GROUP BY to compare income across subgroups. 4. Estimate the IGE and understand why averaging income over multiple years avoids the life-cycle bias."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-1-set-up-your-python-environment",
+    "href": "blog/posts/WEEK6.html#step-1-set-up-your-python-environment",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 1: Set Up Your Python Environment",
+    "text": "Step 1: Set Up Your Python Environment\nYou will need Python installed (version 3.7 or higher). We will use pandas to handle data, pandasql to run SQL directly on pandas DataFrames, and statsmodels to run our regression.\nIn your Python terminal, install the necessary packages:\npip install pandas pandasql statsmodels\nNow, import the libraries in your Python script or Jupyter Notebook:\nimport pandas as pd\nimport pandasql as ps\nimport statsmodels.api as sm"
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-2-load-the-real-psid-data",
+    "href": "blog/posts/WEEK6.html#step-2-load-the-real-psid-data",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 2: Load the Real PSID Data",
+    "text": "Step 2: Load the Real PSID Data\nWe use the ICPSR “Class exercise: Predicting income mobility in PSID” dataset. This dataset contains three generations (g1, g2, g3). The income variables are already averaged over multiple years (to adjust for life-cycle bias) and logged.\n(Make sure learning.csv is in your working directory)\n# Load the dataset\ndf = pd.read_csv(\"learning.csv\")\n\n# Inspect the first few rows\nprint(df.head())\nWhat the variables mean: - g2_id: The parent’s unique identifier. - g3_id: The child’s unique identifier. - g2_log_income: The parent’s average log income. - g3_log_income: The child’s average log income. - g2_educ, g3_educ: Educational attainment. - sex, race: Demographic controls."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-3-sql-step-1---creating-tables-and-joining",
+    "href": "blog/posts/WEEK6.html#step-3-sql-step-1---creating-tables-and-joining",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 3: SQL Step 1 - Creating Tables and JOINing",
+    "text": "Step 3: SQL Step 1 - Creating Tables and JOINing\nIn real-world data engineering, parents and children might be stored in separate tables. We can simulate this by splitting our DataFrame, and then using SQL’s JOIN to bring them back together.\n# Split the data into \"Parent\" and \"Child\" tables\nparents = df[['g2_id', 'g2_log_income', 'g2_educ']]\nchildren = df[['g3_id', 'g2_id', 'g3_log_income', 'g3_educ', 'sex', 'race']]\n\n# Use SQL to JOIN them back together\nquery_join = \"\"\"\n    SELECT \n        c.g3_id,\n        c.g2_id,\n        c.g3_log_income,\n        c.g3_educ,\n        c.sex,\n        c.race,\n        p.g2_log_income,\n        p.g2_educ\n    FROM children c\n    JOIN parents p ON c.g2_id = p.g2_id\n\"\"\"\n\n# Run the SQL query using pandasql\nfamily_matched = ps.sqldf(query_join, locals())\n\n# Remove exact duplicates that may arise from multi-child households\nfamily_matched = family_matched.drop_duplicates()\n\nprint(f\"Total matched children: {len(family_matched)}\")\nprint(family_matched.head())\nExplanation: The JOIN statement combines rows from children and parents where the g2_id (Parent ID) matches. This is the core of the parent-child match."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-4-sql-step-2---group-by-and-aggregation",
+    "href": "blog/posts/WEEK6.html#step-4-sql-step-2---group-by-and-aggregation",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 4: SQL Step 2 - GROUP BY and Aggregation",
+    "text": "Step 4: SQL Step 2 - GROUP BY and Aggregation\nWe can use SQL’s GROUP BY and aggregation functions (like COUNT and AVG) to explore differences in income across demographic groups.\nLet’s compare the average log income of parents and children by sex:\nquery_group = \"\"\"\n    SELECT \n        sex,\n        COUNT(g3_id) AS sample_size,\n        AVG(g2_log_income) AS avg_parent_income,\n        AVG(g3_log_income) AS avg_child_income\n    FROM family_matched\n    GROUP BY sex\n\"\"\"\n\ngrouped_income = ps.sqldf(query_group, locals())\nprint(grouped_income)"
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-5-why-averaging-matters-life-cycle-bias",
+    "href": "blog/posts/WEEK6.html#step-5-why-averaging-matters-life-cycle-bias",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 5: Why Averaging Matters (Life-Cycle Bias)",
+    "text": "Step 5: Why Averaging Matters (Life-Cycle Bias)\nA crucial concept in intergenerational mobility is life-cycle bias.\nIf we use a parent’s income from a single year (e.g., when they are 25, just starting their career), we underestimate their “permanent” economic status. If we use a single year when they are 65 (retired), we also get a distorted picture.\nTo fix this, the PSID dataset we are using has already calculated g2_log_income and g3_log_income as multi-year averages (specifically, averaged over ages 30-45).\nIn a raw panel dataset, you would use SQL to do this:\n-- Example of how averaging is done in SQL\nSELECT parent_id, AVG(income) as avg_income\nFROM income_table\nWHERE age BETWEEN 30 AND 45\nGROUP BY parent_id;\nBy averaging, we smooth out temporary shocks (like a brief unemployment spell) and measure permanent income. This significantly improves the accuracy of our IGE estimates."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#step-6-estimating-the-ige",
+    "href": "blog/posts/WEEK6.html#step-6-estimating-the-ige",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 6: Estimating the IGE",
+    "text": "Step 6: Estimating the IGE\nNow we estimate the IGE using the matched data. The OLS regression is: [ (Income_{child}) = _0 + 1 (Income{parent}) + ]\n# Extract variables\nX = family_matched['g2_log_income']\ny = family_matched['g3_log_income']\n\n# Add a constant (intercept)\nX = sm.add_constant(X)\n\n# Fit OLS model\nmodel = sm.OLS(y, X).fit()\n\n# Print summary\nprint(model.summary())\nInterpreting the results: Looking at the output, the coefficient on g2_log_income is 0.545 and highly significant ((p &lt; 0.01)).\nThis means the Intergenerational Elasticity is 0.545. A 10% increase in a parent’s permanent income is associated with a 5.45% increase in their child’s income. This high elasticity indicates that economic advantages (and disadvantages) are strongly transmitted from parents to children in the U.S."
+  },
+  {
+    "objectID": "blog/posts/WEEK6.html#conclusion",
+    "href": "blog/posts/WEEK6.html#conclusion",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Conclusion",
+    "text": "Conclusion\nIn this tutorial, we successfully used SQL within Python to:\n\nLoad real PSID data.\nUse JOIN to match parent and child tables using individual identifiers.\nUse GROUP BY to aggregate income by demographic groups.\nEstimate an IGE of 0.545 using multi-year averaged income.\n\nBy understanding how SQL can manipulate longitudinal data, and why averaging over multiple years is necessary to combat life-cycle bias, we can build robust models of intergenerational mobility."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html",
+    "href": "docs/blog/posts/WEEK6.html",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "",
+    "text": "How much of our economic success is determined by our parents? Economists measure this using the Intergenerational Elasticity (IGE) — a metric that captures how a percentage change in parents’ income affects their children’s income.\nEstimating this requires matching parents to their children across time. In longitudinal datasets like the Panel Study of Income Dynamics (PSID), this is a complex data engineering task. You cannot simply look at a single row; you have to track individuals across decades and link families together using unique identifiers.\nIn this tutorial, I will demonstrate how to use SQL within Python to construct this parent-child match. We will use a real dataset from the PSID, which has been pre-matched using the Family Identification Mapping System (FIMS).\nBy the end of this tutorial, you will know how to: 1. Load a longitudinal dataset into a SQL database using Python. 2. Use SELECT and JOIN to match parents and children using individual IDs. 3. Use GROUP BY to compare income across subgroups. 4. Estimate the IGE and understand why averaging income over multiple years avoids the life-cycle bias."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#introduction",
+    "href": "docs/blog/posts/WEEK6.html#introduction",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "",
+    "text": "How much of our economic success is determined by our parents? Economists measure this using the Intergenerational Elasticity (IGE) — a metric that captures how a percentage change in parents’ income affects their children’s income.\nEstimating this requires matching parents to their children across time. In longitudinal datasets like the Panel Study of Income Dynamics (PSID), this is a complex data engineering task. You cannot simply look at a single row; you have to track individuals across decades and link families together using unique identifiers.\nIn this tutorial, I will demonstrate how to use SQL within Python to construct this parent-child match. We will use a real dataset from the PSID, which has been pre-matched using the Family Identification Mapping System (FIMS).\nBy the end of this tutorial, you will know how to: 1. Load a longitudinal dataset into a SQL database using Python. 2. Use SELECT and JOIN to match parents and children using individual IDs. 3. Use GROUP BY to compare income across subgroups. 4. Estimate the IGE and understand why averaging income over multiple years avoids the life-cycle bias."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-1-set-up-your-python-environment",
+    "href": "docs/blog/posts/WEEK6.html#step-1-set-up-your-python-environment",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 1: Set Up Your Python Environment",
+    "text": "Step 1: Set Up Your Python Environment\nYou will need Python installed (version 3.7 or higher). We will use pandas to handle data, pandasql to run SQL directly on pandas DataFrames, and statsmodels to run our regression.\nIn your Python terminal, install the necessary packages:\npip install pandas pandasql statsmodels\nNow, import the libraries in your Python script or Jupyter Notebook:\nimport pandas as pd\nimport pandasql as ps\nimport statsmodels.api as sm"
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-2-load-the-real-psid-data",
+    "href": "docs/blog/posts/WEEK6.html#step-2-load-the-real-psid-data",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 2: Load the Real PSID Data",
+    "text": "Step 2: Load the Real PSID Data\nWe use the ICPSR “Class exercise: Predicting income mobility in PSID” dataset. This dataset contains three generations (g1, g2, g3). The income variables are already averaged over multiple years (to adjust for life-cycle bias) and logged.\n(Make sure learning.csv is in your working directory)\n# Load the dataset\ndf = pd.read_csv(\"learning.csv\")\n\n# Inspect the first few rows\nprint(df.head())\nWhat the variables mean: - g2_id: The parent’s unique identifier. - g3_id: The child’s unique identifier. - g2_log_income: The parent’s average log income. - g3_log_income: The child’s average log income. - g2_educ, g3_educ: Educational attainment. - sex, race: Demographic controls."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-3-sql-step-1---creating-tables-and-joining",
+    "href": "docs/blog/posts/WEEK6.html#step-3-sql-step-1---creating-tables-and-joining",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 3: SQL Step 1 - Creating Tables and JOINing",
+    "text": "Step 3: SQL Step 1 - Creating Tables and JOINing\nIn real-world data engineering, parents and children might be stored in separate tables. We can simulate this by splitting our DataFrame, and then using SQL’s JOIN to bring them back together.\n# Split the data into \"Parent\" and \"Child\" tables\nparents = df[['g2_id', 'g2_log_income', 'g2_educ']]\nchildren = df[['g3_id', 'g2_id', 'g3_log_income', 'g3_educ', 'sex', 'race']]\n\n# Use SQL to JOIN them back together\nquery_join = \"\"\"\n    SELECT \n        c.g3_id,\n        c.g2_id,\n        c.g3_log_income,\n        c.g3_educ,\n        c.sex,\n        c.race,\n        p.g2_log_income,\n        p.g2_educ\n    FROM children c\n    JOIN parents p ON c.g2_id = p.g2_id\n\"\"\"\n\n# Run the SQL query using pandasql\nfamily_matched = ps.sqldf(query_join, locals())\n\n# Remove exact duplicates that may arise from multi-child households\nfamily_matched = family_matched.drop_duplicates()\n\nprint(f\"Total matched children: {len(family_matched)}\")\nprint(family_matched.head())\nExplanation: The JOIN statement combines rows from children and parents where the g2_id (Parent ID) matches. This is the core of the parent-child match."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-4-sql-step-2---group-by-and-aggregation",
+    "href": "docs/blog/posts/WEEK6.html#step-4-sql-step-2---group-by-and-aggregation",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 4: SQL Step 2 - GROUP BY and Aggregation",
+    "text": "Step 4: SQL Step 2 - GROUP BY and Aggregation\nWe can use SQL’s GROUP BY and aggregation functions (like COUNT and AVG) to explore differences in income across demographic groups.\nLet’s compare the average log income of parents and children by sex:\nquery_group = \"\"\"\n    SELECT \n        sex,\n        COUNT(g3_id) AS sample_size,\n        AVG(g2_log_income) AS avg_parent_income,\n        AVG(g3_log_income) AS avg_child_income\n    FROM family_matched\n    GROUP BY sex\n\"\"\"\n\ngrouped_income = ps.sqldf(query_group, locals())\nprint(grouped_income)"
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-5-why-averaging-matters-life-cycle-bias",
+    "href": "docs/blog/posts/WEEK6.html#step-5-why-averaging-matters-life-cycle-bias",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 5: Why Averaging Matters (Life-Cycle Bias)",
+    "text": "Step 5: Why Averaging Matters (Life-Cycle Bias)\nA crucial concept in intergenerational mobility is life-cycle bias.\nIf we use a parent’s income from a single year (e.g., when they are 25, just starting their career), we underestimate their “permanent” economic status. If we use a single year when they are 65 (retired), we also get a distorted picture.\nTo fix this, the PSID dataset we are using has already calculated g2_log_income and g3_log_income as multi-year averages (specifically, averaged over ages 30-45).\nIn a raw panel dataset, you would use SQL to do this:\n-- Example of how averaging is done in SQL\nSELECT parent_id, AVG(income) as avg_income\nFROM income_table\nWHERE age BETWEEN 30 AND 45\nGROUP BY parent_id;\nBy averaging, we smooth out temporary shocks (like a brief unemployment spell) and measure permanent income. This significantly improves the accuracy of our IGE estimates."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#step-6-estimating-the-ige",
+    "href": "docs/blog/posts/WEEK6.html#step-6-estimating-the-ige",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Step 6: Estimating the IGE",
+    "text": "Step 6: Estimating the IGE\nNow we estimate the IGE using the matched data. The OLS regression is: [ (Income_{child}) = _0 + 1 (Income{parent}) + ]\n# Extract variables\nX = family_matched['g2_log_income']\ny = family_matched['g3_log_income']\n\n# Add a constant (intercept)\nX = sm.add_constant(X)\n\n# Fit OLS model\nmodel = sm.OLS(y, X).fit()\n\n# Print summary\nprint(model.summary())\nInterpreting the results: Looking at the output, the coefficient on g2_log_income is 0.545 and highly significant ((p &lt; 0.01)).\nThis means the Intergenerational Elasticity is 0.545. A 10% increase in a parent’s permanent income is associated with a 5.45% increase in their child’s income. This high elasticity indicates that economic advantages (and disadvantages) are strongly transmitted from parents to children in the U.S."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK6.html#conclusion",
+    "href": "docs/blog/posts/WEEK6.html#conclusion",
+    "title": "Blog6: Matching Parents and Children with SQL in Python",
+    "section": "Conclusion",
+    "text": "Conclusion\nIn this tutorial, we successfully used SQL within Python to:\n\nLoad real PSID data.\nUse JOIN to match parent and child tables using individual identifiers.\nUse GROUP BY to aggregate income by demographic groups.\nEstimate an IGE of 0.545 using multi-year averaged income.\n\nBy understanding how SQL can manipulate longitudinal data, and why averaging over multiple years is necessary to combat life-cycle bias, we can build robust models of intergenerational mobility."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html",
+    "href": "docs/blog/posts/WEEK5.html",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "",
+    "text": "Where you live and how much you earn are closely connected. In the United States, income is not distributed randomly across space. High-income households cluster in certain neighborhoods, low-income households cluster in others, and the boundary between them is often sharp.\nPennsylvania is a useful place to study this pattern. It contains two major metropolitan areas, Philadelphia and Pittsburgh, as well as large stretches of rural land and older industrial towns. If income is spatially concentrated, Pennsylvania should show it.\nThis analysis uses census tract data from the American Community Survey (ACS) to map median household income across all 3,383 tracts in Pennsylvania. A census tract is a small geographic unit, typically containing 1,200 to 8,000 people, which is small enough to reveal neighborhood-level patterns that county or city averages would hide.\nThe question this passage wants to answer is: where are high-income and low-income areas concentrated in Pennsylvania, and what does that pattern reveal about economic geography?\nThe answer turns out to be a story about scale. Income segregation appears at three levels, the state, the metropolitan area, and the neighborhood, and each level tells a different part of the story."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#introduction",
+    "href": "docs/blog/posts/WEEK5.html#introduction",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "",
+    "text": "Where you live and how much you earn are closely connected. In the United States, income is not distributed randomly across space. High-income households cluster in certain neighborhoods, low-income households cluster in others, and the boundary between them is often sharp.\nPennsylvania is a useful place to study this pattern. It contains two major metropolitan areas, Philadelphia and Pittsburgh, as well as large stretches of rural land and older industrial towns. If income is spatially concentrated, Pennsylvania should show it.\nThis analysis uses census tract data from the American Community Survey (ACS) to map median household income across all 3,383 tracts in Pennsylvania. A census tract is a small geographic unit, typically containing 1,200 to 8,000 people, which is small enough to reveal neighborhood-level patterns that county or city averages would hide.\nThe question this passage wants to answer is: where are high-income and low-income areas concentrated in Pennsylvania, and what does that pattern reveal about economic geography?\nThe answer turns out to be a story about scale. Income segregation appears at three levels, the state, the metropolitan area, and the neighborhood, and each level tells a different part of the story."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#how-i-measured-it",
+    "href": "docs/blog/posts/WEEK5.html#how-i-measured-it",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "How I Measured It",
+    "text": "How I Measured It\nI used data from the 2022 ACS 5-year estimates, published by the U.S. Census Bureau. The key variable is B19013_001 — median household income, in inflation-adjusted dollars.\nWhy median. Household income is strongly right-skewed. A small number of very high earners pull the mean far above the typical household. The median is less affected by those extreme values, so it better represents what a typical household earns.\nWhy census tracts. Counties and cities are too large to capture neighborhood-level variation. For example, the county-level median income hides the fact that some neighborhoods are among the wealthiest in the state while others are among the poorest. Census tracts reveal this variation with more precise division.\nData cleaning. I removed tracts with missing income estimates (62 tracts) and one tract with an empty geometry. The final sample contains 3,383 tracts, covering all 67 counties in Pennsylvania."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#finding-1-income-is-concentrated-at-the-state-level",
+    "href": "docs/blog/posts/WEEK5.html#finding-1-income-is-concentrated-at-the-state-level",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 1: Income Is Concentrated at the State Level",
+    "text": "Finding 1: Income Is Concentrated at the State Level\n\n\n\nThe geography of income in Pennsylvania\n\n\nThe first map shows median household income for every tract in Pennsylvania, colored by income quintile (each color contains 20% of tracts).\nThe pattern is clear. The lowest-income tracts (dark blue) are concentrated in: - Center City Philadelphia and its surrounding neighborhoods - Inner Pittsburgh - Older industrial towns such as Erie, Scranton, and Reading\nThe highest-income tracts (orange and red) are concentrated in: - Philadelphia’s western suburbs (the Main Line) - Pittsburgh’s northern and eastern suburbs - A few university towns (State College, University Park)\nThe middle of the state, which is the large rural area between the two metropolitan regions, is almost entirely middle-income (yellow and light blue). There are less extreme values in these regions.\nWhat this means. Income in Pennsylvania is not evenly distributed across space. It is clustered into two main high-income zones (the Philadelphia and Pittsburgh metro areas) and a few smaller ones, surrounded by a large middle-income rural region."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#finding-2-income-quintiles-cluster-spatially",
+    "href": "docs/blog/posts/WEEK5.html#finding-2-income-quintiles-cluster-spatially",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 2: Income Quintiles Cluster Spatially",
+    "text": "Finding 2: Income Quintiles Cluster Spatially\n\n\n\nIncome quintiles cluster spatially\n\n\nThe second map isolates the top and bottom quintiles to make the clustering more visible.\nTwo patterns stand out:\n\nHigh-income tracts (red) form a dense, contiguous block in southeastern Pennsylvania, stretching from Philadelphia westward into Chester and Montgomery counties. This is a large and connected region of affluence rather than a scattering of rich neighborhoods.\nLow-income tracts (dark blue) also cluster, but in different places: inner Philadelphia, inner Pittsburgh, and a string of smaller cities along the Susquehanna and Lehigh rivers.\n\nThe key finding is that rich and poor tracts are adjacent to each other and form coherent geographic regions. The boundary between a red tract and a blue tract is often a single street."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#finding-3-income-segregation-within-philadelphia",
+    "href": "docs/blog/posts/WEEK5.html#finding-3-income-segregation-within-philadelphia",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Finding 3: Income Segregation Within Philadelphia",
+    "text": "Finding 3: Income Segregation Within Philadelphia\n\n\n\nIncome segregation within Philadelphia\n\n\nThe third map zooms into Philadelphia to show what income segregation looks like at the neighborhood level.\nThe pattern is striking. North Philadelphia and Kensington, which are the large sections of the city, are almost entirely dark blue (bottom quintile). Center City is light green (middle quintile, not top). Chestnut Hill and parts of South Philadelphia are orange (top quintile).\nSo we could make several conclusions:\n\nCenter City is not the richest part of the city. Although many tall buildings are concentrated in this economic center, many students and renters are also living in the region. so the median household income is only in the middle quintile. The wealthiest tracts are in the northwest and along the southern edge.\nLow-income neighborhoods form a contiguous corridor running north from Center City. It reflects decades of disinvestment, redlining, and the geography of public housing.\nHigh-income neighborhoods are small and separated. Unlike the poor neighborhoods, which form large continuous areas, the wealthy neighborhoods are smaller and often isolated from each other by middle-income tracts."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#conclusion",
+    "href": "docs/blog/posts/WEEK5.html#conclusion",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Conclusion",
+    "text": "Conclusion\nThe spatial patterns in these three maps reveal three things about economic geography in Pennsylvania:\n1. Income is not distributed randomly. It clusters into recognizable regions: some rich, some poor, most in between. This clustering is visible at every scale, from the whole state down to individual neighborhoods.\n2. Segregation is not just about income levels. It is about spatial adjacency. A state where rich and poor neighborhoods are next to each other looks very different from a state where they are separated by large middle-income buffers. For Pennsylvania, high-income regions concentrated in the southeast and southwest, low-income regions concentrated in inner cities and older industrial towns, and a vast middle-income rural interior.\n3. Scale matters. A county-level map would show Philadelphia and Pittsburgh as relatively poor and their suburbs as relatively rich. But the tract-level map shows that the story is more complicated: within Philadelphia, some neighborhoods are among the wealthiest in the state, and within the suburbs, some tracts are middle-income. Aggregation hides these patterns.\nWhat should a reader take away? The map is not just a picture of where people live. It is a picture of opportunity — access to good schools, safe streets, and high-paying jobs is distributed unevenly across space, and the boundaries are often sharp. This is the geography that policy has to work with."
+  },
+  {
+    "objectID": "docs/blog/posts/WEEK5.html#limitations",
+    "href": "docs/blog/posts/WEEK5.html#limitations",
+    "title": "Blog5: The Geography of Income in Pennsylvania",
+    "section": "Limitations",
+    "text": "Limitations\n\nACS estimates are uncertain. Each tract’s median income has a margin of error, sometimes large. Small differences between adjacent tracts may not be statistically meaningful.\nMedian income is a crude measure. It says nothing about wealth, cost of living, or household size. A tract with many retirees may have a low median income but high wealth.\n2022 snapshot. The data reflect one year. Income geography changes slowly, but the picture would differ in other years.\nTract boundaries can change. Comparisons across years require attention to boundary changes.\nSpatial patterns are not causal. The maps show where income is concentrated, not why. Explanations require additional data and analysis.\n\n\nData source: U.S. Census Bureau, American Community Survey 5-year estimates (2022), table B19013. Retrieved via the tidycensus R package. Full code and data are available in the project repository."
   }
 ]
