@@ -1,0 +1,172 @@
+---
+title: "Blog6: Matching Parents and Children with SQL in Python"
+date: 2026-10-21
+author: "Yuzhuo Cui"
+output: html_document
+---
+
+## Introduction
+
+How much of our economic success is determined by our parents? Economists measure this using the **Intergenerational Elasticity (IGE)** — a metric that captures how a percentage change in parents' income affects their children's income. 
+
+Estimating this requires matching parents to their children across time. In longitudinal datasets like the Panel Study of Income Dynamics (PSID), this is a complex data engineering task. You cannot simply look at a single row; you have to track individuals across decades and link families together using unique identifiers.
+
+In this tutorial, I will demonstrate how to use **SQL within Python** to construct this parent-child match. We will use a real dataset from the PSID, which has been pre-matched using the Family Identification Mapping System (FIMS). 
+
+By the end of this tutorial, you will know how to:
+1. Load a longitudinal dataset into a SQL database using Python.
+2. Use `SELECT` and `JOIN` to match parents and children using individual IDs.
+3. Use `GROUP BY` to compare income across subgroups.
+4. Estimate the IGE and understand why averaging income over multiple years avoids the **life-cycle bias**.
+
+## Step 1: Set Up Your Python Environment
+
+You will need Python installed (version 3.7 or higher). We will use `pandas` to handle data, `pandasql` to run SQL directly on pandas DataFrames, and `statsmodels` to run our regression.
+
+In your Python terminal, install the necessary packages:
+```bash
+pip install pandas pandasql statsmodels
+```
+
+Now, import the libraries in your Python script or Jupyter Notebook:
+```python
+import pandas as pd
+import pandasql as ps
+import statsmodels.api as sm
+```
+
+## Step 2: Load the Real PSID Data
+
+We use the ICPSR "Class exercise: Predicting income mobility in PSID" dataset. This dataset contains three generations (g1, g2, g3). The income variables are already averaged over multiple years (to adjust for life-cycle bias) and logged.
+
+*(Make sure `learning.csv` is in your working directory)*
+
+```python
+# Load the dataset
+df = pd.read_csv("learning.csv")
+
+# Inspect the first few rows
+print(df.head())
+```
+
+**What the variables mean:**
+- `g2_id`: The parent's unique identifier.
+- `g3_id`: The child's unique identifier.
+- `g2_log_income`: The parent's average log income.
+- `g3_log_income`: The child's average log income.
+- `g2_educ`, `g3_educ`: Educational attainment.
+- `sex`, `race`: Demographic controls.
+
+## Step 3: SQL Step 1 - Creating Tables and JOINing
+
+In real-world data engineering, parents and children might be stored in separate tables. We can simulate this by splitting our DataFrame, and then using SQL's `JOIN` to bring them back together.
+
+```python
+# Split the data into "Parent" and "Child" tables
+parents = df[['g2_id', 'g2_log_income', 'g2_educ']]
+children = df[['g3_id', 'g2_id', 'g3_log_income', 'g3_educ', 'sex', 'race']]
+
+# Use SQL to JOIN them back together
+query_join = """
+    SELECT 
+        c.g3_id,
+        c.g2_id,
+        c.g3_log_income,
+        c.g3_educ,
+        c.sex,
+        c.race,
+        p.g2_log_income,
+        p.g2_educ
+    FROM children c
+    JOIN parents p ON c.g2_id = p.g2_id
+"""
+
+# Run the SQL query using pandasql
+family_matched = ps.sqldf(query_join, locals())
+
+# Remove exact duplicates that may arise from multi-child households
+family_matched = family_matched.drop_duplicates()
+
+print(f"Total matched children: {len(family_matched)}")
+print(family_matched.head())
+```
+
+*Explanation:* The `JOIN` statement combines rows from `children` and `parents` where the `g2_id` (Parent ID) matches. This is the core of the parent-child match.
+
+## Step 4: SQL Step 2 - GROUP BY and Aggregation
+
+We can use SQL's `GROUP BY` and aggregation functions (like `COUNT` and `AVG`) to explore differences in income across demographic groups.
+
+Let's compare the average log income of parents and children by sex:
+
+```python
+query_group = """
+    SELECT 
+        sex,
+        COUNT(g3_id) AS sample_size,
+        AVG(g2_log_income) AS avg_parent_income,
+        AVG(g3_log_income) AS avg_child_income
+    FROM family_matched
+    GROUP BY sex
+"""
+
+grouped_income = ps.sqldf(query_group, locals())
+print(grouped_income)
+```
+
+## Step 5: Why Averaging Matters (Life-Cycle Bias)
+
+A crucial concept in intergenerational mobility is **life-cycle bias**. 
+
+If we use a parent's income from a **single year** (e.g., when they are 25, just starting their career), we underestimate their "permanent" economic status. If we use a single year when they are 65 (retired), we also get a distorted picture. 
+
+To fix this, the PSID dataset we are using has already calculated `g2_log_income` and `g3_log_income` as **multi-year averages** (specifically, averaged over ages 30-45). 
+
+In a raw panel dataset, you would use SQL to do this:
+```sql
+-- Example of how averaging is done in SQL
+SELECT parent_id, AVG(income) as avg_income
+FROM income_table
+WHERE age BETWEEN 30 AND 45
+GROUP BY parent_id;
+```
+
+By averaging, we smooth out temporary shocks (like a brief unemployment spell) and measure **permanent income**. This significantly improves the accuracy of our IGE estimates.
+
+## Step 6: Estimating the IGE
+
+Now we estimate the IGE using the matched data. The OLS regression is:
+\[
+ \log(Income_{child}) = \beta_0 + \beta_1 \log(Income_{parent}) + \epsilon 
+\]
+
+```python
+# Extract variables
+X = family_matched['g2_log_income']
+y = family_matched['g3_log_income']
+
+# Add a constant (intercept)
+X = sm.add_constant(X)
+
+# Fit OLS model
+model = sm.OLS(y, X).fit()
+
+# Print summary
+print(model.summary())
+```
+
+**Interpreting the results:**
+Looking at the output, the coefficient on `g2_log_income` is **0.545** and highly significant (\(p < 0.01\)). 
+
+This means the Intergenerational Elasticity is 0.545. A 10% increase in a parent's permanent income is associated with a 5.45% increase in their child's income. This high elasticity indicates that economic advantages (and disadvantages) are strongly transmitted from parents to children in the U.S.
+
+## Conclusion
+
+In this tutorial, we successfully used SQL within Python to:
+
+1. Load real PSID data.
+2. Use `JOIN` to match parent and child tables using individual identifiers.
+3. Use `GROUP BY` to aggregate income by demographic groups.
+4. Estimate an IGE of 0.545 using multi-year averaged income.
+
+By understanding how SQL can manipulate longitudinal data, and why averaging over multiple years is necessary to combat life-cycle bias, we can build robust models of intergenerational mobility.
