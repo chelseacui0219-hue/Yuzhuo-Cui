@@ -69,15 +69,9 @@ high school or college graduate earns.
 The college premium rose from **60% in 2002** to **73% in 2015**,
 then fell to **66.7% in 2022**. After 2022, it rebounded to **70.5% in 2025**. 
 
-One possible reason for the increasing trend before 2015 is that the premium is being drivenby the **shocks to the labor market** — particularly
-shocks that hit workers without a degree. 
+This V-shape is closely tied to the business cycle. The premium is partly driven by **asymmetric shocks to the labor market** — recessions hit workers without a degree much harder than those with a degree.
 
-When low-wage jobs disappear during a recession, high school
-graduates' median earnings fall, and the *ratio* that defines
-the premium mechanically rises. When those jobs recover, the
-premium falls back.
-
-While the decreasing trend happened in the COVID period is another case. During the pandemic, high-paying white-collar positions are also facing the impact of layoffs and remote work. The relative demand for university graduates might weaken around 2022.
+**The data confirms this.** According to the U.S. Bureau of Labor Statistics (BLS), during the aftermath of the Great Recession in 2010, the unemployment rate for high school graduates with no college was **10.3%**, while the rate for bachelor's degree holders was only **4.7%** [citation:9]. When low-wage jobs disappear disproportionately during a recession, high school graduates' median earnings fall, and the *ratio* that defines the premium mechanically rises. When those jobs recover, the premium falls back.
 
 ## Finding 2: The Volatility comes from high school graduates
 
@@ -144,7 +138,7 @@ the U.S. labor market:
    affects measured earnings.
 
 2. **Male high school graduates have seen their earnings decline**, 
-   particularly in manufacturing and other
+   often linked to structural changes in manufacturing and other
    traditionally male-dominated industries. Female high school
    graduates' earnings have been more stable (though also low,
    around $24,000 for most of the period).
