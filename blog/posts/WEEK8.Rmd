@@ -1,6 +1,6 @@
 ---
 title: "Blog8: Simulation and Statistical Inference"
-date: 2026-11-10
+date: 2026-10-26
 author: "Yuzhuo Cui"
 format: html
 ---
