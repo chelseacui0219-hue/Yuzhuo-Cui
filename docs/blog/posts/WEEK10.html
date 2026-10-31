@@ -153,10 +153,9 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="how-i-measured-it" class="level2">
 <h2 class="anchored" data-anchor-id="how-i-measured-it">How I Measured It</h2>
-<p>I used the 2024 Annual Social and Economic Supplement (ASEC) of the CPS, which contains detailed annual income and demographic data.</p>
-<p>To avoid data leakage, I strictly excluded current wage income (<code>INCWAGE</code>) since the poverty line is mechanically defined by income. The predictors include: - Age (<code>AGE</code>) - Sex (<code>SEX</code>) - Education, binned into three groups: high school or less, some college, and bachelor’s plus. - Employment status, binned into three groups: employed, unemployed, and not in the labor force.</p>
-<p>The data is split 80/20 into training and test sets. Because the poverty rate is only 10.4%, accuracy is a misleading metric (a naive model predicting “no poverty” for everyone would be 89.6% accurate). Instead, I evaluate models primarily using <strong>ROC-AUC</strong> and a targeted policy metric: the actual poverty rate within the 20% of individuals assigned the highest predicted risk.</p>
-<p>I compare three models: Logistic Regression (Baseline), Random Forest, and XGBoost. Hyperparameters for the tree models are tuned using cross-validation on the training set, ensuring the test set remains completely unseen until final evaluation.</p>
+<p>I used the <strong>2024 ASEC</strong> of the CPS, which collects income data for the <strong>2023 calendar year</strong>. (Note: The official 2023 poverty rate was 11.1%; our sample rate of 10.4% reflects the restriction to working-age adults and the exclusion of missing values).</p>
+<p>To prevent <strong>target leakage</strong>, I strictly excluded all current income variables (including <code>INCWAGE</code>). The poverty threshold is mechanically defined by family total income; using individual wage income to predict poverty would be tautological. The predictors therefore rely only on demographic and labor market characteristics known beforehand or concurrently: - Age (<code>AGE</code>) - Sex (<code>SEX</code>) - Education, binned into three groups: high school or less, some college, and bachelor’s plus. - Employment status, binned into three groups: employed, unemployed, and not in the labor force.</p>
+<p>The data is split 80/20 into training and test sets. Because the poverty rate is only 10.4%, accuracy is a misleading metric (a naive model predicting “no poverty” for everyone would be 89.6% accurate). Instead, I evaluate models using <strong>ROC-AUC</strong> and a targeted policy metric: the actual poverty rate within the 20% of individuals assigned the highest predicted risk. Hyperparameters for the tree models are tuned via cross-validation on the training set.</p>
 </section>
 <section id="finding-1-ml-improves-targeting-capability" class="level2">
 <h2 class="anchored" data-anchor-id="finding-1-ml-improves-targeting-capability">Finding 1: ML Improves Targeting Capability</h2>
@@ -190,8 +189,8 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>The results reveal that machine learning offers a modest but real improvement over the baseline. The logistic regression performs surprisingly well, achieving an AUC of 0.740. However, the gradient boosting model (XGBoost) outperforms it, reaching an AUC of <strong>0.765</strong>.</p>
-<p>The more practical metric is the “Targeting” performance. While the overall poverty rate in the test set is 10.4%, the 20% of individuals with the highest predicted risk from XGBoost have an actual poverty rate of <strong>25.4%</strong>. For a policymaker, this means ML can sharply focus limited resources on the most vulnerable groups instead of random selection.</p>
+<p>The logistic regression baseline performs surprisingly well (AUC 0.740), indicating that the relationship between these coarse demographic variables and poverty risk is largely additive and linear. XGBoost outperforms it (AUC 0.765) by capturing non-linearities and interactions.</p>
+<p>However, the most practically meaningful improvement is in <strong>targeting</strong>. While the overall poverty rate is 10.4%, the 20% of individuals with the highest predicted risk from XGBoost have an actual poverty rate of <strong>25.4%</strong>. For a policymaker, this means ML can sharply focus limited resources on the most vulnerable groups instead of random selection.</p>
 </section>
 <section id="finding-2-labor-force-detachment-is-the-biggest-risk" class="level2">
 <h2 class="anchored" data-anchor-id="finding-2-labor-force-detachment-is-the-biggest-risk">Finding 2: Labor Force Detachment is the Biggest Risk</h2>
@@ -201,29 +200,24 @@ ul.task-list li input[type="checkbox"] {
 <figcaption>XGBoost SHAP values: Drivers of Poverty Risk</figcaption>
 </figure>
 </div>
-<p>To understand <em>what</em> the XGBoost model learned, I compute SHAP (SHapley Additive exPlanations) values on the test set. SHAP values decompose each individual’s prediction, showing how much each feature pushed the predicted probability of poverty up or down.</p>
-<p>The beeswarm plot provides an intuitive story: - <strong>Labor force status</strong> is the most powerful driver. Being “Not in the Labor Force” (yellow dots on the right) drastically increases the risk of poverty. - <strong>Education</strong> is the second key factor. Having a high school education or less strongly increases risk, whereas having “some college” or a bachelor’s degree strongly protects against poverty (purple dots on the left). - <strong>Age</strong> displays a non-linear relationship. Younger individuals have a higher risk, which gradually declines as they approach prime working age.</p>
-<p>Interestingly, while being “Unemployed” is a massive shock that pushes risk sky-high, “Not in the Labor Force” has a broader, more consistent impact across the sample. This highlights a distinct form of vulnerability: people who have stopped looking for work are structurally more likely to be in poverty than those who are actively unemployed.</p>
+<p>To understand <em>what</em> the XGBoost model learned, I compute SHAP (SHapley Additive exPlanations) values on the test set. The beeswarm plot decomposes each individual’s prediction, showing how features push the predicted probability up or down.</p>
+<p>The plot reveals that <strong>labor force status</strong> is the most powerful driver. Being “Not in the Labor Force” consistently pushes predicted risk to the right. Education is the second key factor: having a high school education or less increases risk, whereas some college strongly protects against it. Age displays a non-linear relationship—younger individuals have higher risk, which declines as they approach prime working age.</p>
+<p>Interestingly, while “Unemployed” produces massive positive SHAP values when it occurs, its impact is concentrated in a small subset of the sample. “Not in the Labor Force,” by contrast, has a much broader positive SHAP distribution. This highlights a distinct form of vulnerability: structural detachment from the labor force is more widespread among the poor than temporary unemployment.</p>
 </section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>This complete machine learning workflow yields three takeaways:</p>
-<ol type="1">
-<li><strong>Predicting poverty is tractable, but the performance ceiling is modest.</strong> Complex models (XGBoost) outperform simple ones (AUC 0.765 vs 0.740), but the gain isn’t magical.</li>
-<li><strong>Predictive gains are practically valuable when used for targeting.</strong> The model successfully identifies a high-risk subgroup where poverty is 2.4 times more prevalent.</li>
-<li><strong>Interpretability tools like SHAP reveal structural truths.</strong> Structural detachment from the labor force, rather than temporary unemployment, is the strongest risk factor. Machine learning will not replace economists’ structural models, but it provides a powerful lens for identifying who needs help the most.</li>
-</ol>
+<section id="conclusion-and-takeaway" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-and-takeaway">Conclusion and Takeaway</h2>
+<p>If I had to choose a model for a policy application, I would choose <strong>XGBoost</strong>. While the AUC gain over the logistic baseline is modest (0.765 vs.&nbsp;0.740), the model’s ability to concentrate 25.4% of high-risk individuals into a 20% targeting pool is a practically meaningful improvement. Machine learning does not replace economic intuition—it sharpens it by allowing us to rank individuals and quantify non-linear interactions.</p>
 </section>
 <section id="limitations" class="level2">
 <h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
-<p>This analysis has several limitations:</p>
 <ul>
 <li><strong>Observational, not causal.</strong> The model identifies predictive correlations, not the causal effect of education or employment on poverty.</li>
+<li><strong>Unweighted estimates.</strong> The analysis does not apply CPS survey weights (<code>ASECWT</code>). While the sample poverty rate (10.4%) is close to the official rate for the reference year (11.1%), unweighted targeting estimates may not perfectly represent the national population, which could affect external validity in real-world deployment.</li>
 <li><strong>Limited features.</strong> The model relies on a small set of demographic and labor force variables. Adding geographic, health, or household structure data could improve predictive power.</li>
 <li><strong>Threshold-based evaluation.</strong> While Top-20% targeting reflects a realistic policy constraint, the optimal percentage might vary depending on the actual budget of the welfare program.</li>
 </ul>
 <hr>
-<p><em>Data source: <a href="https://cps.ipums.org/">IPUMS CPS</a>, Annual Social and Economic Supplement, 2024. Full code and data are available in the project repository.</em></p>
+<p><em>Data source: <a href="https://cps.ipums.org/">IPUMS CPS</a>, 2024 Annual Social and Economic Supplement (reference year 2023). Full code and data are available in the project repository.</em></p>
 
 
 </section>
