@@ -53,7 +53,7 @@ Interestingly, while being "Unemployed" is a massive shock that pushes risk sky-
 
 ## Conclusion
 
-This complete machine learning workflow yields three takeaways:
+This machine learning workflow yields three takeaways:
 
 1. **Predicting poverty is tractable, but the performance ceiling is modest.** Complex models (XGBoost) outperform simple ones (AUC 0.765 vs 0.740), but the gain isn't magical.
 2. **Predictive gains are practically valuable when used for targeting.** The model successfully identifies a high-risk subgroup where poverty is 2.4 times more prevalent.
