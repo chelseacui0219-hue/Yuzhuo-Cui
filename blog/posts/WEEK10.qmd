@@ -65,7 +65,7 @@ This analysis has several limitations:
 
 - **Observational, not causal.** The model identifies predictive correlations, not the causal effect of education or employment on poverty. 
 - **Limited features.** The model relies on a small set of demographic and labor force variables. Adding geographic, health, or household structure data could improve predictive power.
-- **Threshold-based evaluation.** While Top-20% targeting reflects a realistic policy constraint, the optimal percentage might vary depending on the actual budget of the welfare program.
+- **Threshold-based evaluation.** While the Top-20% targeting reflects a realistic policy constraint, the optimal percentage might vary depending on the actual budget of the welfare program.
 
 ---
 
