@@ -85,7 +85,7 @@ The transaction-cost analysis also assumes complete buying and selling each peri
 
 ## Takeaway
 
-This experiment shows that reducing model complexity can improve out-of-sample prediction accuracy, but better forecasts do not necessarily generate better investment returns.
+This experiment shows that reducing model complexity can improve out-of-sample prediction accuracy. However, better forecasts do not necessarily generate better investment returns.
 
 The regularized model achieved lower prediction errors, while the original model produced stronger portfolio performance. More importantly, the predictive relationships remained weak, and even simple strategies generated substantial historical returns.
 

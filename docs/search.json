@@ -823,7 +823,7 @@
     "href": "blog/posts/WEEK9.html#takeaway",
     "title": "Blog9: Predicting Stock Returns with Gradient Boosting: Does a Simpler Model Perform Better?",
     "section": "Takeaway",
-    "text": "Takeaway\nThis experiment shows that reducing model complexity can improve out-of-sample prediction accuracy, but better forecasts do not necessarily generate better investment returns.\nThe regularized model achieved lower prediction errors, while the original model produced stronger portfolio performance. More importantly, the predictive relationships remained weak, and even simple strategies generated substantial historical returns.\nI learned that evaluating financial machine learning requires looking beyond prediction accuracy or cumulative returns alone. A successful backtest is not sufficient evidence that a model can reliably predict the stock market."
+    "text": "Takeaway\nThis experiment shows that reducing model complexity can improve out-of-sample prediction accuracy. However, better forecasts do not necessarily generate better investment returns.\nThe regularized model achieved lower prediction errors, while the original model produced stronger portfolio performance. More importantly, the predictive relationships remained weak, and even simple strategies generated substantial historical returns.\nI learned that evaluating financial machine learning requires looking beyond prediction accuracy or cumulative returns alone. A successful backtest is not sufficient evidence that a model can reliably predict the stock market."
   },
   {
     "objectID": "blog/posts/WEEK9.html#data-and-reproducibility",
