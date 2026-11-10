@@ -831,5 +831,12 @@
     "title": "Blog9: Predicting Stock Returns with Gradient Boosting: Does a Simpler Model Perform Better?",
     "section": "Data and Reproducibility",
     "text": "Data and Reproducibility\nData source: Yahoo Finance, including historical stock prices and market benchmarks.\nReproducibility: The analysis notebook and supporting files are available in the project’s GitHub repository."
+  },
+  {
+    "objectID": "blog/posts/WEEK9.html#takeaway-from-the-model",
+    "href": "blog/posts/WEEK9.html#takeaway-from-the-model",
+    "title": "Blog9: Predicting Stock Returns with Gradient Boosting: Does a Simpler Model Perform Better?",
+    "section": "Takeaway From the Model",
+    "text": "Takeaway From the Model\nThis experiment shows that reducing model complexity can improve out-of-sample prediction accuracy. However, better forecasts do not necessarily generate better investment returns.\nThe regularized model achieved lower prediction errors, while the original model produced stronger portfolio performance. More importantly, the predictive relationships remained weak, and even simple strategies generated substantial historical returns.\nI learned that evaluating financial machine learning requires looking beyond prediction accuracy or cumulative returns alone. A successful backtest is not sufficient evidence that a model can reliably predict the stock market."
   }
 ]

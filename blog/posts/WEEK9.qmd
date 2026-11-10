@@ -83,7 +83,7 @@ Although the XGBoost portfolios remained profitable after assumed transaction co
 
 The transaction-cost analysis also assumes complete buying and selling each period, including for SPY. This makes it a standardized sensitivity test rather than a realistic comparison with a passive buy-and-hold SPY investment.
 
-## Takeaway
+## Takeaway From the Model
 
 This experiment shows that reducing model complexity can improve out-of-sample prediction accuracy. However, better forecasts do not necessarily generate better investment returns.
 

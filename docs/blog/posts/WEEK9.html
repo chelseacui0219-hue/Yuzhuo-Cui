@@ -134,7 +134,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#improving-the-model" id="toc-improving-the-model" class="nav-link" data-scroll-target="#improving-the-model">Improving the Model</a></li>
   <li><a href="#prediction-results" id="toc-prediction-results" class="nav-link" data-scroll-target="#prediction-results">Prediction Results</a></li>
   <li><a href="#from-predictions-to-investment-returns" id="toc-from-predictions-to-investment-returns" class="nav-link" data-scroll-target="#from-predictions-to-investment-returns">From Predictions to Investment Returns</a></li>
-  <li><a href="#takeaway" id="toc-takeaway" class="nav-link" data-scroll-target="#takeaway">Takeaway</a></li>
+  <li><a href="#takeaway-from-the-model" id="toc-takeaway-from-the-model" class="nav-link" data-scroll-target="#takeaway-from-the-model">Takeaway From the Model</a></li>
   <li><a href="#data-and-reproducibility" id="toc-data-and-reproducibility" class="nav-link" data-scroll-target="#data-and-reproducibility">Data and Reproducibility</a></li>
   </ul>
 </nav>
@@ -301,8 +301,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Although the XGBoost portfolios remained profitable after assumed transaction costs, these results should be interpreted cautiously. The backtest uses a fixed stock universe, potentially introducing survivorship bias, and does not fully account for liquidity, market impact, or changing market conditions.</p>
 <p>The transaction-cost analysis also assumes complete buying and selling each period, including for SPY. This makes it a standardized sensitivity test rather than a realistic comparison with a passive buy-and-hold SPY investment.</p>
 </section>
-<section id="takeaway" class="level2">
-<h2 class="anchored" data-anchor-id="takeaway">Takeaway</h2>
+<section id="takeaway-from-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="takeaway-from-the-model">Takeaway From the Model</h2>
 <p>This experiment shows that reducing model complexity can improve out-of-sample prediction accuracy. However, better forecasts do not necessarily generate better investment returns.</p>
 <p>The regularized model achieved lower prediction errors, while the original model produced stronger portfolio performance. More importantly, the predictive relationships remained weak, and even simple strategies generated substantial historical returns.</p>
 <p>I learned that evaluating financial machine learning requires looking beyond prediction accuracy or cumulative returns alone. A successful backtest is not sufficient evidence that a model can reliably predict the stock market.</p>
